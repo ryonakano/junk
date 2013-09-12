@@ -691,10 +691,6 @@ namespace Drives
             drive_format_button = new Gtk.Button.with_label (" "+_("Format Drive")+" ");
             bottom_buttons_box.pack_start (drive_format_button, false, true, 5);
             drive_format_button.clicked.connect (show_light_window);
-/* TODO
-            drive_restore_button = new Gtk.Button.with_label (" "+_("Restore")+" ");
-            bottom_buttons_box.pack_start (drive_restore_button, false, true, 5);
-*/
             content.pack_end (bottom_buttons_box, false, false, 10);
 
             // Options wrapper
@@ -893,10 +889,6 @@ namespace Drives
             bottom_buttons_box.pack_start (partition_files_button, false, true, 5);
             partition_mount_button = new Gtk.Button.with_label (" "+_("Mount")+" ");
             bottom_buttons_box.pack_start (partition_mount_button, false, true, 5);
-/* TODO
-            partition_erase_button = new Gtk.Button.with_label (" "+_("Erase")+" ");
-            bottom_buttons_box.pack_start (partition_erase_button, false, true, 5);
-*/
             content.pack_end (bottom_buttons_box, false, false, 10);
 
             // Options wrapper
@@ -1075,7 +1067,7 @@ namespace Drives
 
             var notebook = new Granite.Widgets.StaticNotebook ();
             notebook.append_page (new Gtk.Label (_("TODO: One click formatting")), new Gtk.Label (_("Basic")));
-            notebook.append_page (new Gtk.Label (_("TODO: Allow basic partitioning")), new Gtk.Label (_("Advanced")));
+            notebook.append_page (new Gtk.Label (_("TODO: Allow basic partitioning")), new Gtk.Label (_("Partitioning")));
             notebook.append_page (new Gtk.Label (_("TODO: dd images to drive")), new Gtk.Label (_("Restore")));
 
             light_window.add (notebook);

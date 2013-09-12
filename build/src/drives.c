@@ -6930,7 +6930,7 @@ static void drives_drive_details_show_light_window (DrivesDriveDetails* self) {
 	_tmp10_ = (GtkLabel*) gtk_label_new (_tmp9_);
 	g_object_ref_sink (_tmp10_);
 	_tmp11_ = _tmp10_;
-	_tmp12_ = _ ("Advanced");
+	_tmp12_ = _ ("Partitioning");
 	_tmp13_ = (GtkLabel*) gtk_label_new (_tmp12_);
 	g_object_ref_sink (_tmp13_);
 	_tmp14_ = _tmp13_;
