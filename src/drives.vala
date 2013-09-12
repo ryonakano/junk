@@ -1067,7 +1067,7 @@ namespace Drives
 
             var notebook = new Granite.Widgets.StaticNotebook ();
             notebook.append_page (new Gtk.Label (_("TODO: One click formatting")), new Gtk.Label (_("Format")));
-            notebook.append_page (new Gtk.Label (_("TODO: Allow basic partitioning")), new Gtk.Label (_("Partition")));
+            notebook.append_page (new Gtk.Label (_("TODO: Allow basic partitioning")), new Gtk.Label (_("Partitions")));
             notebook.append_page (new Gtk.Label (_("TODO: dd images to drive")), new Gtk.Label (_("Restore")));
 
             light_window.add (notebook);

@@ -6919,7 +6919,7 @@ static void drives_drive_details_show_light_window (DrivesDriveDetails* self) {
 	_tmp4_ = (GtkLabel*) gtk_label_new (_tmp3_);
 	g_object_ref_sink (_tmp4_);
 	_tmp5_ = _tmp4_;
-	_tmp6_ = _ ("Basic");
+	_tmp6_ = _ ("Format");
 	_tmp7_ = (GtkLabel*) gtk_label_new (_tmp6_);
 	g_object_ref_sink (_tmp7_);
 	_tmp8_ = _tmp7_;
@@ -6930,7 +6930,7 @@ static void drives_drive_details_show_light_window (DrivesDriveDetails* self) {
 	_tmp10_ = (GtkLabel*) gtk_label_new (_tmp9_);
 	g_object_ref_sink (_tmp10_);
 	_tmp11_ = _tmp10_;
-	_tmp12_ = _ ("Partitioning");
+	_tmp12_ = _ ("Partitions");
 	_tmp13_ = (GtkLabel*) gtk_label_new (_tmp12_);
 	g_object_ref_sink (_tmp13_);
 	_tmp14_ = _tmp13_;
