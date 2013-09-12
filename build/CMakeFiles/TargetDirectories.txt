@@ -1,0 +1,3 @@
+/home/albert/Projects/switchboard-plug-drives/build/src/CMakeFiles/drives.dir
+/home/albert/Projects/switchboard-plug-drives/build/po/CMakeFiles/i18n.dir
+/home/albert/Projects/switchboard-plug-drives/build/po/CMakeFiles/pot.dir

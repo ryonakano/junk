@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+21d18f18f2043f3b6bcd6656e1ee6485 po/CMakeFiles/i18n
+21d18f18f2043f3b6bcd6656e1ee6485 po/CMakeFiles/pot
+d8f2d42f20a1e59a01b49eb28c2b1103 src/drives.c

@@ -1,0 +1,3 @@
+/usr/lib/plugs/pantheon/drives/drives.plug
+/usr/share/locale/en_GB/LC_MESSAGES/drives.mo
+/usr/lib/plugs/pantheon/drives/drives

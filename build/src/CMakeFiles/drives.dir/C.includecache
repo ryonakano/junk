@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/albert/Projects/switchboard-plug-drives/build/src/drives.c
+glib.h
+-
+glib-object.h
+-
+gio/gio.h
+-
+stdlib.h
+-
+string.h
+-
+pantheon.h
+-
+granite.h
+-
+gtk/gtk.h
+-
+gee.h
+-
+glib/gi18n-lib.h
+-
+float.h
+-
+math.h
+-
+cairo.h
+-
+

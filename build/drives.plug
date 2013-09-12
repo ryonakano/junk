@@ -1,0 +1,6 @@
+[drives.plug]
+exec=drives
+icon=drive-harddisk
+title=Drives
+category=hardware
+X-GNOME-Gettext-Domain=drives
