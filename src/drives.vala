@@ -23,6 +23,8 @@ namespace Drives
         public abstract string PartitionType { owned get; }
         public abstract string DriveAtaSmartStatus { owned get; }
         public abstract string PartitionTableScheme { owned get; }
+        public abstract int PartitionTableCount { owned get; }
+        public abstract int PartitionNumber { owned get; }
         public abstract string[] DeviceMountPaths { owned get; }
         public abstract string[] DriveMediaCompatibility { owned get; }
         public abstract bool DeviceIsPartition { owned get; }
@@ -192,6 +194,16 @@ namespace Drives
 
                     // Device partitions
                     var serial = device.DriveSerial;
+                    for (var counter = 0; counter <= device.PartitionTableCount; counter++) { // Sort numerically
+                        foreach (ObjectPath xo in devices) {
+                            var inner_device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks",xo);
+                            if (serial == inner_device.DriveSerial && inner_device.DeviceIsPartition && counter == inner_device.PartitionNumber) {
+                                var inner_device_ref = driveAdd (xo);
+                                if (inner_device_ref.is_file_system) device_ref.is_file_system = true;
+                            }
+                        }
+                    }
+/*
                     foreach (ObjectPath xo in devices) {
                         var inner_device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks",xo);
                         if (serial == inner_device.DriveSerial && inner_device.DeviceIsPartition) {
@@ -199,6 +211,7 @@ namespace Drives
                             if (inner_device_ref.is_file_system) device_ref.is_file_system = true;
                         }
                     }
+*/
                 }
             }
         }

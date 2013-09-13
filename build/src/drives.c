@@ -115,6 +115,8 @@ struct _DrivesDevice_ifIface {
 	gchar* (*get_PartitionType) (DrivesDevice_if* self);
 	gchar* (*get_DriveAtaSmartStatus) (DrivesDevice_if* self);
 	gchar* (*get_PartitionTableScheme) (DrivesDevice_if* self);
+	gint (*get_PartitionTableCount) (DrivesDevice_if* self);
+	gint (*get_PartitionNumber) (DrivesDevice_if* self);
 	gchar** (*get_DeviceMountPaths) (DrivesDevice_if* self, int* result_length1);
 	gchar** (*get_DriveMediaCompatibility) (DrivesDevice_if* self, int* result_length1);
 	gboolean (*get_DeviceIsPartition) (DrivesDevice_if* self);
@@ -268,6 +270,8 @@ gchar* drives_device_if_get_IdUsage (DrivesDevice_if* self);
 gchar* drives_device_if_get_PartitionType (DrivesDevice_if* self);
 gchar* drives_device_if_get_DriveAtaSmartStatus (DrivesDevice_if* self);
 gchar* drives_device_if_get_PartitionTableScheme (DrivesDevice_if* self);
+gint drives_device_if_get_PartitionTableCount (DrivesDevice_if* self);
+gint drives_device_if_get_PartitionNumber (DrivesDevice_if* self);
 gchar** drives_device_if_get_DeviceMountPaths (DrivesDevice_if* self, int* result_length1);
 gchar** drives_device_if_get_DriveMediaCompatibility (DrivesDevice_if* self, int* result_length1);
 gboolean drives_device_if_get_DeviceIsPartition (DrivesDevice_if* self);
@@ -299,6 +303,8 @@ static gchar* drives_device_if_dbus_proxy_get_IdUsage (DrivesDevice_if* self);
 static gchar* drives_device_if_dbus_proxy_get_PartitionType (DrivesDevice_if* self);
 static gchar* drives_device_if_dbus_proxy_get_DriveAtaSmartStatus (DrivesDevice_if* self);
 static gchar* drives_device_if_dbus_proxy_get_PartitionTableScheme (DrivesDevice_if* self);
+static gint drives_device_if_dbus_proxy_get_PartitionTableCount (DrivesDevice_if* self);
+static gint drives_device_if_dbus_proxy_get_PartitionNumber (DrivesDevice_if* self);
 static gchar** drives_device_if_dbus_proxy_get_DeviceMountPaths (DrivesDevice_if* self, int* result_length1);
 static gchar** drives_device_if_dbus_proxy_get_DriveMediaCompatibility (DrivesDevice_if* self, int* result_length1);
 static gboolean drives_device_if_dbus_proxy_get_DeviceIsPartition (DrivesDevice_if* self);
@@ -332,6 +338,8 @@ static GVariant* _dbus_drives_device_if_get_IdUsage (DrivesDevice_if* self);
 static GVariant* _dbus_drives_device_if_get_PartitionType (DrivesDevice_if* self);
 static GVariant* _dbus_drives_device_if_get_DriveAtaSmartStatus (DrivesDevice_if* self);
 static GVariant* _dbus_drives_device_if_get_PartitionTableScheme (DrivesDevice_if* self);
+static GVariant* _dbus_drives_device_if_get_PartitionTableCount (DrivesDevice_if* self);
+static GVariant* _dbus_drives_device_if_get_PartitionNumber (DrivesDevice_if* self);
 static GVariant* _dbus_drives_device_if_get_DeviceMountPaths (DrivesDevice_if* self);
 static GVariant* _dbus_drives_device_if_get_DriveMediaCompatibility (DrivesDevice_if* self);
 static GVariant* _dbus_drives_device_if_get_DeviceIsPartition (DrivesDevice_if* self);
@@ -495,6 +503,8 @@ static const GDBusPropertyInfo _drives_device_if_dbus_property_info_IdUsage = {-
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_PartitionType = {-1, "PartitionType", "s", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DriveAtaSmartStatus = {-1, "DriveAtaSmartStatus", "s", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_PartitionTableScheme = {-1, "PartitionTableScheme", "s", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
+static const GDBusPropertyInfo _drives_device_if_dbus_property_info_PartitionTableCount = {-1, "PartitionTableCount", "i", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
+static const GDBusPropertyInfo _drives_device_if_dbus_property_info_PartitionNumber = {-1, "PartitionNumber", "i", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DeviceMountPaths = {-1, "DeviceMountPaths", "as", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DriveMediaCompatibility = {-1, "DriveMediaCompatibility", "as", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DeviceIsPartition = {-1, "DeviceIsPartition", "b", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
@@ -508,7 +518,7 @@ static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DeviceIsSyst
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DeviceIsDrive = {-1, "DeviceIsDrive", "b", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DeviceIsPartitionTable = {-1, "DeviceIsPartitionTable", "b", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
 static const GDBusPropertyInfo _drives_device_if_dbus_property_info_DriveAtaSmartIsAvailable = {-1, "DriveAtaSmartIsAvailable", "b", G_DBUS_PROPERTY_INFO_FLAGS_READABLE};
-static const GDBusPropertyInfo * const _drives_device_if_dbus_property_info[] = {&_drives_device_if_dbus_property_info_IdLabel, &_drives_device_if_dbus_property_info_DriveVendor, &_drives_device_if_dbus_property_info_DriveSerial, &_drives_device_if_dbus_property_info_DeviceFile, &_drives_device_if_dbus_property_info_DriveModel, &_drives_device_if_dbus_property_info_DeviceSize, &_drives_device_if_dbus_property_info_PartitionSize, &_drives_device_if_dbus_property_info_DevicePresentationIconName, &_drives_device_if_dbus_property_info_IdType, &_drives_device_if_dbus_property_info_IdUsage, &_drives_device_if_dbus_property_info_PartitionType, &_drives_device_if_dbus_property_info_DriveAtaSmartStatus, &_drives_device_if_dbus_property_info_PartitionTableScheme, &_drives_device_if_dbus_property_info_DeviceMountPaths, &_drives_device_if_dbus_property_info_DriveMediaCompatibility, &_drives_device_if_dbus_property_info_DeviceIsPartition, &_drives_device_if_dbus_property_info_DeviceIsOpticalDisc, &_drives_device_if_dbus_property_info_DeviceIsMediaAvailable, &_drives_device_if_dbus_property_info_DeviceIsRemovable, &_drives_device_if_dbus_property_info_DeviceIsMounted, &_drives_device_if_dbus_property_info_DriveIsMediaEjectable, &_drives_device_if_dbus_property_info_DriveCanDetach, &_drives_device_if_dbus_property_info_DeviceIsSystemInternal, &_drives_device_if_dbus_property_info_DeviceIsDrive, &_drives_device_if_dbus_property_info_DeviceIsPartitionTable, &_drives_device_if_dbus_property_info_DriveAtaSmartIsAvailable, NULL};
+static const GDBusPropertyInfo * const _drives_device_if_dbus_property_info[] = {&_drives_device_if_dbus_property_info_IdLabel, &_drives_device_if_dbus_property_info_DriveVendor, &_drives_device_if_dbus_property_info_DriveSerial, &_drives_device_if_dbus_property_info_DeviceFile, &_drives_device_if_dbus_property_info_DriveModel, &_drives_device_if_dbus_property_info_DeviceSize, &_drives_device_if_dbus_property_info_PartitionSize, &_drives_device_if_dbus_property_info_DevicePresentationIconName, &_drives_device_if_dbus_property_info_IdType, &_drives_device_if_dbus_property_info_IdUsage, &_drives_device_if_dbus_property_info_PartitionType, &_drives_device_if_dbus_property_info_DriveAtaSmartStatus, &_drives_device_if_dbus_property_info_PartitionTableScheme, &_drives_device_if_dbus_property_info_PartitionTableCount, &_drives_device_if_dbus_property_info_PartitionNumber, &_drives_device_if_dbus_property_info_DeviceMountPaths, &_drives_device_if_dbus_property_info_DriveMediaCompatibility, &_drives_device_if_dbus_property_info_DeviceIsPartition, &_drives_device_if_dbus_property_info_DeviceIsOpticalDisc, &_drives_device_if_dbus_property_info_DeviceIsMediaAvailable, &_drives_device_if_dbus_property_info_DeviceIsRemovable, &_drives_device_if_dbus_property_info_DeviceIsMounted, &_drives_device_if_dbus_property_info_DriveIsMediaEjectable, &_drives_device_if_dbus_property_info_DriveCanDetach, &_drives_device_if_dbus_property_info_DeviceIsSystemInternal, &_drives_device_if_dbus_property_info_DeviceIsDrive, &_drives_device_if_dbus_property_info_DeviceIsPartitionTable, &_drives_device_if_dbus_property_info_DriveAtaSmartIsAvailable, NULL};
 static const GDBusInterfaceInfo _drives_device_if_dbus_interface_info = {-1, "org.freedesktop.UDisks.Device", (GDBusMethodInfo **) (&_drives_device_if_dbus_method_info), (GDBusSignalInfo **) (&_drives_device_if_dbus_signal_info), (GDBusPropertyInfo **) (&_drives_device_if_dbus_property_info)};
 static const GDBusInterfaceVTable _drives_device_if_dbus_interface_vtable = {drives_device_if_dbus_interface_method_call, drives_device_if_dbus_interface_get_property, drives_device_if_dbus_interface_set_property};
 
@@ -905,6 +915,18 @@ gchar* drives_device_if_get_DriveAtaSmartStatus (DrivesDevice_if* self) {
 gchar* drives_device_if_get_PartitionTableScheme (DrivesDevice_if* self) {
 	g_return_val_if_fail (self != NULL, NULL);
 	return DRIVES_DEVICE_IF_GET_INTERFACE (self)->get_PartitionTableScheme (self);
+}
+
+
+gint drives_device_if_get_PartitionTableCount (DrivesDevice_if* self) {
+	g_return_val_if_fail (self != NULL, 0);
+	return DRIVES_DEVICE_IF_GET_INTERFACE (self)->get_PartitionTableCount (self);
+}
+
+
+gint drives_device_if_get_PartitionNumber (DrivesDevice_if* self) {
+	g_return_val_if_fail (self != NULL, 0);
+	return DRIVES_DEVICE_IF_GET_INTERFACE (self)->get_PartitionNumber (self);
 }
 
 
@@ -1495,6 +1517,56 @@ static gchar* drives_device_if_dbus_proxy_get_PartitionTableScheme (DrivesDevice
 }
 
 
+static gint drives_device_if_dbus_proxy_get_PartitionTableCount (DrivesDevice_if* self) {
+	GVariant *_inner_reply;
+	gint _result;
+	_inner_reply = g_dbus_proxy_get_cached_property ((GDBusProxy *) self, "PartitionTableCount");
+	if (!_inner_reply) {
+		GVariant *_arguments;
+		GVariant *_reply;
+		GVariantBuilder _arguments_builder;
+		g_variant_builder_init (&_arguments_builder, G_VARIANT_TYPE_TUPLE);
+		g_variant_builder_add_value (&_arguments_builder, g_variant_new_string ("org.freedesktop.UDisks.Device"));
+		g_variant_builder_add_value (&_arguments_builder, g_variant_new_string ("PartitionTableCount"));
+		_arguments = g_variant_builder_end (&_arguments_builder);
+		_reply = g_dbus_proxy_call_sync ((GDBusProxy *) self, "org.freedesktop.DBus.Properties.Get", _arguments, G_DBUS_CALL_FLAGS_NONE, -1, NULL, NULL);
+		if (!_reply) {
+			return 0;
+		}
+		g_variant_get (_reply, "(v)", &_inner_reply);
+		g_variant_unref (_reply);
+	}
+	_result = g_variant_get_int32 (_inner_reply);
+	g_variant_unref (_inner_reply);
+	return _result;
+}
+
+
+static gint drives_device_if_dbus_proxy_get_PartitionNumber (DrivesDevice_if* self) {
+	GVariant *_inner_reply;
+	gint _result;
+	_inner_reply = g_dbus_proxy_get_cached_property ((GDBusProxy *) self, "PartitionNumber");
+	if (!_inner_reply) {
+		GVariant *_arguments;
+		GVariant *_reply;
+		GVariantBuilder _arguments_builder;
+		g_variant_builder_init (&_arguments_builder, G_VARIANT_TYPE_TUPLE);
+		g_variant_builder_add_value (&_arguments_builder, g_variant_new_string ("org.freedesktop.UDisks.Device"));
+		g_variant_builder_add_value (&_arguments_builder, g_variant_new_string ("PartitionNumber"));
+		_arguments = g_variant_builder_end (&_arguments_builder);
+		_reply = g_dbus_proxy_call_sync ((GDBusProxy *) self, "org.freedesktop.DBus.Properties.Get", _arguments, G_DBUS_CALL_FLAGS_NONE, -1, NULL, NULL);
+		if (!_reply) {
+			return 0;
+		}
+		g_variant_get (_reply, "(v)", &_inner_reply);
+		g_variant_unref (_reply);
+	}
+	_result = g_variant_get_int32 (_inner_reply);
+	g_variant_unref (_inner_reply);
+	return _result;
+}
+
+
 static gchar** drives_device_if_dbus_proxy_get_DeviceMountPaths (DrivesDevice_if* self, int* result_length1) {
 	GVariant *_inner_reply;
 	gchar** _result;
@@ -1886,6 +1958,8 @@ static void drives_device_if_proxy_drives_device_if_interface_init (DrivesDevice
 	iface->get_PartitionType = drives_device_if_dbus_proxy_get_PartitionType;
 	iface->get_DriveAtaSmartStatus = drives_device_if_dbus_proxy_get_DriveAtaSmartStatus;
 	iface->get_PartitionTableScheme = drives_device_if_dbus_proxy_get_PartitionTableScheme;
+	iface->get_PartitionTableCount = drives_device_if_dbus_proxy_get_PartitionTableCount;
+	iface->get_PartitionNumber = drives_device_if_dbus_proxy_get_PartitionNumber;
 	iface->get_DeviceMountPaths = drives_device_if_dbus_proxy_get_DeviceMountPaths;
 	iface->get_DriveMediaCompatibility = drives_device_if_dbus_proxy_get_DriveMediaCompatibility;
 	iface->get_DeviceIsPartition = drives_device_if_dbus_proxy_get_DeviceIsPartition;
@@ -2276,6 +2350,24 @@ static GVariant* _dbus_drives_device_if_get_PartitionTableScheme (DrivesDevice_i
 }
 
 
+static GVariant* _dbus_drives_device_if_get_PartitionTableCount (DrivesDevice_if* self) {
+	gint result;
+	GVariant* _reply;
+	result = drives_device_if_get_PartitionTableCount (self);
+	_reply = g_variant_new_int32 (result);
+	return _reply;
+}
+
+
+static GVariant* _dbus_drives_device_if_get_PartitionNumber (DrivesDevice_if* self) {
+	gint result;
+	GVariant* _reply;
+	result = drives_device_if_get_PartitionNumber (self);
+	_reply = g_variant_new_int32 (result);
+	return _reply;
+}
+
+
 static GVariant* _dbus_drives_device_if_get_DeviceMountPaths (DrivesDevice_if* self) {
 	gchar** result;
 	int result_length1 = 0;
@@ -2446,6 +2538,10 @@ static GVariant* drives_device_if_dbus_interface_get_property (GDBusConnection* 
 		return _dbus_drives_device_if_get_DriveAtaSmartStatus (object);
 	} else if (strcmp (property_name, "PartitionTableScheme") == 0) {
 		return _dbus_drives_device_if_get_PartitionTableScheme (object);
+	} else if (strcmp (property_name, "PartitionTableCount") == 0) {
+		return _dbus_drives_device_if_get_PartitionTableCount (object);
+	} else if (strcmp (property_name, "PartitionNumber") == 0) {
+		return _dbus_drives_device_if_get_PartitionNumber (object);
 	} else if (strcmp (property_name, "DeviceMountPaths") == 0) {
 		return _dbus_drives_device_if_get_DeviceMountPaths (object);
 	} else if (strcmp (property_name, "DriveMediaCompatibility") == 0) {
@@ -3182,8 +3278,6 @@ void drives_drives_list_loadDrivesBucle (DrivesDrivesList* self, gboolean system
 					gchar* _tmp19_;
 					gchar* _tmp20_;
 					gchar* serial;
-					char** _tmp21_;
-					gint _tmp21__length1;
 					_tmp16_ = o;
 					_tmp17_ = drives_drives_list_driveAdd (self, (const gchar*) _tmp16_);
 					device_ref = _tmp17_;
@@ -3191,87 +3285,134 @@ void drives_drives_list_loadDrivesBucle (DrivesDrivesList* self, gboolean system
 					_tmp19_ = drives_device_if_get_DriveSerial (_tmp18_);
 					_tmp20_ = _tmp19_;
 					serial = _tmp20_;
-					_tmp21_ = devices;
-					_tmp21__length1 = devices_length1;
 					{
-						char** xo_collection = NULL;
-						gint xo_collection_length1 = 0;
-						gint _xo_collection_size_ = 0;
-						gint xo_it = 0;
-						xo_collection = _tmp21_;
-						xo_collection_length1 = _tmp21__length1;
-						for (xo_it = 0; xo_it < _tmp21__length1; xo_it = xo_it + 1) {
-							char* _tmp22_;
-							char* xo = NULL;
-							_tmp22_ = g_strdup (xo_collection[xo_it]);
-							xo = _tmp22_;
-							{
-								const char* _tmp23_;
-								DrivesDevice_if* _tmp24_ = NULL;
-								DrivesDevice_if* inner_device;
-								gboolean _tmp25_ = FALSE;
-								const gchar* _tmp26_;
-								DrivesDevice_if* _tmp27_;
-								gchar* _tmp28_;
-								gchar* _tmp29_;
-								gchar* _tmp30_;
-								gboolean _tmp31_;
-								gboolean _tmp35_;
-								_tmp23_ = xo;
-								_tmp24_ = g_initable_new (DRIVES_TYPE_DEVICE_IF_PROXY, NULL, &_inner_error_, "g-flags", 0, "g-name", "org.freedesktop.UDisks", "g-bus-type", G_BUS_TYPE_SYSTEM, "g-object-path", (const gchar*) _tmp23_, "g-interface-name", "org.freedesktop.UDisks.Device", NULL);
-								inner_device = (DrivesDevice_if*) _tmp24_;
-								if (_inner_error_ != NULL) {
-									_g_free0 (xo);
-									_g_free0 (serial);
-									_g_object_unref0 (device_ref);
-									_g_object_unref0 (device);
-									_g_free0 (o);
-									devices = (_vala_array_free (devices, devices_length1, (GDestroyNotify) g_free), NULL);
-									g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
-									g_clear_error (&_inner_error_);
-									return;
+						gint counter;
+						counter = 0;
+						{
+							gboolean _tmp21_;
+							_tmp21_ = TRUE;
+							while (TRUE) {
+								gboolean _tmp22_;
+								gint _tmp24_;
+								DrivesDevice_if* _tmp25_;
+								gint _tmp26_;
+								gint _tmp27_;
+								char** _tmp28_;
+								gint _tmp28__length1;
+								_tmp22_ = _tmp21_;
+								if (!_tmp22_) {
+									gint _tmp23_;
+									_tmp23_ = counter;
+									counter = _tmp23_ + 1;
 								}
-								_tmp26_ = serial;
-								_tmp27_ = inner_device;
-								_tmp28_ = drives_device_if_get_DriveSerial (_tmp27_);
-								_tmp29_ = _tmp28_;
-								_tmp30_ = _tmp29_;
-								_tmp31_ = g_strcmp0 (_tmp26_, _tmp30_) == 0;
-								_g_free0 (_tmp30_);
-								if (_tmp31_) {
-									DrivesDevice_if* _tmp32_;
-									gboolean _tmp33_;
-									gboolean _tmp34_;
-									_tmp32_ = inner_device;
-									_tmp33_ = drives_device_if_get_DeviceIsPartition (_tmp32_);
-									_tmp34_ = _tmp33_;
-									_tmp25_ = _tmp34_;
-								} else {
-									_tmp25_ = FALSE;
+								_tmp21_ = FALSE;
+								_tmp24_ = counter;
+								_tmp25_ = device;
+								_tmp26_ = drives_device_if_get_PartitionTableCount (_tmp25_);
+								_tmp27_ = _tmp26_;
+								if (!(_tmp24_ <= _tmp27_)) {
+									break;
 								}
-								_tmp35_ = _tmp25_;
-								if (_tmp35_) {
-									const char* _tmp36_;
-									DrivesListDriveItem* _tmp37_ = NULL;
-									DrivesListDriveItem* inner_device_ref;
-									DrivesListDriveItem* _tmp38_;
-									gboolean _tmp39_;
-									gboolean _tmp40_;
-									_tmp36_ = xo;
-									_tmp37_ = drives_drives_list_driveAdd (self, (const gchar*) _tmp36_);
-									inner_device_ref = _tmp37_;
-									_tmp38_ = inner_device_ref;
-									_tmp39_ = drives_list_drive_item_get_is_file_system (_tmp38_);
-									_tmp40_ = _tmp39_;
-									if (_tmp40_) {
-										DrivesListDriveItem* _tmp41_;
-										_tmp41_ = device_ref;
-										drives_list_drive_item_set_is_file_system (_tmp41_, TRUE);
+								_tmp28_ = devices;
+								_tmp28__length1 = devices_length1;
+								{
+									char** xo_collection = NULL;
+									gint xo_collection_length1 = 0;
+									gint _xo_collection_size_ = 0;
+									gint xo_it = 0;
+									xo_collection = _tmp28_;
+									xo_collection_length1 = _tmp28__length1;
+									for (xo_it = 0; xo_it < _tmp28__length1; xo_it = xo_it + 1) {
+										char* _tmp29_;
+										char* xo = NULL;
+										_tmp29_ = g_strdup (xo_collection[xo_it]);
+										xo = _tmp29_;
+										{
+											const char* _tmp30_;
+											DrivesDevice_if* _tmp31_ = NULL;
+											DrivesDevice_if* inner_device;
+											gboolean _tmp32_ = FALSE;
+											gboolean _tmp33_ = FALSE;
+											const gchar* _tmp34_;
+											DrivesDevice_if* _tmp35_;
+											gchar* _tmp36_;
+											gchar* _tmp37_;
+											gchar* _tmp38_;
+											gboolean _tmp39_;
+											gboolean _tmp43_;
+											gboolean _tmp48_;
+											_tmp30_ = xo;
+											_tmp31_ = g_initable_new (DRIVES_TYPE_DEVICE_IF_PROXY, NULL, &_inner_error_, "g-flags", 0, "g-name", "org.freedesktop.UDisks", "g-bus-type", G_BUS_TYPE_SYSTEM, "g-object-path", (const gchar*) _tmp30_, "g-interface-name", "org.freedesktop.UDisks.Device", NULL);
+											inner_device = (DrivesDevice_if*) _tmp31_;
+											if (_inner_error_ != NULL) {
+												_g_free0 (xo);
+												_g_free0 (serial);
+												_g_object_unref0 (device_ref);
+												_g_object_unref0 (device);
+												_g_free0 (o);
+												devices = (_vala_array_free (devices, devices_length1, (GDestroyNotify) g_free), NULL);
+												g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
+												g_clear_error (&_inner_error_);
+												return;
+											}
+											_tmp34_ = serial;
+											_tmp35_ = inner_device;
+											_tmp36_ = drives_device_if_get_DriveSerial (_tmp35_);
+											_tmp37_ = _tmp36_;
+											_tmp38_ = _tmp37_;
+											_tmp39_ = g_strcmp0 (_tmp34_, _tmp38_) == 0;
+											_g_free0 (_tmp38_);
+											if (_tmp39_) {
+												DrivesDevice_if* _tmp40_;
+												gboolean _tmp41_;
+												gboolean _tmp42_;
+												_tmp40_ = inner_device;
+												_tmp41_ = drives_device_if_get_DeviceIsPartition (_tmp40_);
+												_tmp42_ = _tmp41_;
+												_tmp33_ = _tmp42_;
+											} else {
+												_tmp33_ = FALSE;
+											}
+											_tmp43_ = _tmp33_;
+											if (_tmp43_) {
+												gint _tmp44_;
+												DrivesDevice_if* _tmp45_;
+												gint _tmp46_;
+												gint _tmp47_;
+												_tmp44_ = counter;
+												_tmp45_ = inner_device;
+												_tmp46_ = drives_device_if_get_PartitionNumber (_tmp45_);
+												_tmp47_ = _tmp46_;
+												_tmp32_ = _tmp44_ == _tmp47_;
+											} else {
+												_tmp32_ = FALSE;
+											}
+											_tmp48_ = _tmp32_;
+											if (_tmp48_) {
+												const char* _tmp49_;
+												DrivesListDriveItem* _tmp50_ = NULL;
+												DrivesListDriveItem* inner_device_ref;
+												DrivesListDriveItem* _tmp51_;
+												gboolean _tmp52_;
+												gboolean _tmp53_;
+												_tmp49_ = xo;
+												_tmp50_ = drives_drives_list_driveAdd (self, (const gchar*) _tmp49_);
+												inner_device_ref = _tmp50_;
+												_tmp51_ = inner_device_ref;
+												_tmp52_ = drives_list_drive_item_get_is_file_system (_tmp51_);
+												_tmp53_ = _tmp52_;
+												if (_tmp53_) {
+													DrivesListDriveItem* _tmp54_;
+													_tmp54_ = device_ref;
+													drives_list_drive_item_set_is_file_system (_tmp54_, TRUE);
+												}
+												_g_object_unref0 (inner_device_ref);
+											}
+											_g_object_unref0 (inner_device);
+											_g_free0 (xo);
+										}
 									}
-									_g_object_unref0 (inner_device_ref);
 								}
-								_g_object_unref0 (inner_device);
-								_g_free0 (xo);
 							}
 						}
 					}
