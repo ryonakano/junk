@@ -20,6 +20,7 @@ namespace Drives
         public abstract string DevicePresentationIconName { owned get; }
         public abstract string IdType { owned get; }
         public abstract string IdUsage { owned get; }
+        public abstract string PartitionLabel { owned get; }
         public abstract string PartitionType { owned get; }
         public abstract string DriveAtaSmartStatus { owned get; }
         public abstract string PartitionTableScheme { owned get; }
@@ -200,18 +201,10 @@ namespace Drives
                             if (serial == inner_device.DriveSerial && inner_device.DeviceIsPartition && counter == inner_device.PartitionNumber) {
                                 var inner_device_ref = driveAdd (xo);
                                 if (inner_device_ref.is_file_system) device_ref.is_file_system = true;
+                                break;
                             }
                         }
                     }
-/*
-                    foreach (ObjectPath xo in devices) {
-                        var inner_device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks",xo);
-                        if (serial == inner_device.DriveSerial && inner_device.DeviceIsPartition) {
-                            var inner_device_ref = driveAdd (xo);
-                            if (inner_device_ref.is_file_system) device_ref.is_file_system = true;
-                        }
-                    }
-*/
                 }
             }
         }
@@ -255,7 +248,8 @@ namespace Drives
                 this.name = show_label;
 
             } else {
-                show_label = device.IdLabel;
+                show_label = device.PartitionLabel;
+                if (show_label=="")     show_label = device.IdLabel;
                 if (show_label=="")     show_label = device.IdType;
                 if (show_label=="swap") show_label = _("Linux Swap");
                 if (show_label=="")     show_label = _("Unkown");
@@ -299,6 +293,8 @@ namespace Drives
      */
     class DriveDetails : Gtk.EventBox
     {
+        protected string dbus_path;
+
         protected Gtk.Notebook view_switcher;
         protected Gtk.Box view_welcome;
         protected int page_welcome;
@@ -356,7 +352,8 @@ namespace Drives
         }
 
         public void loadDriveInformation (ListDriveItem item) {
-            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
+            dbus_path = item.dbus_path;
+            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", dbus_path);
 
             drive_icon.clear ();
             drive_icon.set_from_icon_name (item.icon_name, Gtk.IconSize.DIALOG);
@@ -398,7 +395,8 @@ namespace Drives
         }
 
         public void loadPartitionInformation (ListDriveItem item) {
-            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
+            dbus_path = item.dbus_path;
+            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", dbus_path);
 
             partition_icon.clear ();
             partition_icon.set_from_icon_name (item.icon_name, Gtk.IconSize.DIALOG);
@@ -1064,7 +1062,10 @@ namespace Drives
         }
 
         private void show_format_window () {
-            var light_window = new Granite.Widgets.LightWindow (_("Format Drive")+" ");
+            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", dbus_path);
+
+
+            var light_window = new Granite.Widgets.LightWindow (_("Format")+" ");
             light_window.width_request = 350;
 
             var notebook = new Granite.Widgets.StaticNotebook ();
