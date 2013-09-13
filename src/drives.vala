@@ -60,16 +60,16 @@ namespace Drives
             this.add (pane);
 
             // Handle events
-            source_list.item_selected.connect ((item) => {
-                var d = item as ListDriveItem;
-                loadItemView (d);
-                source_list.driveSelectedClean ();
-                d.is_selected = true;
+            source_list.item_selected.connect ((o) => {
+                var item = o as ListDriveItem;
+                loadItemView (item);
+                source_list.driveCleanSelected ();
+                item.is_selected = true;
             });
 
-            source_list.refresh_selected.connect ((item) => {
-                var d = item as ListDriveItem;
-                loadItemView (d);
+            source_list.refresh_selected.connect ((o) => {
+                var item = o as ListDriveItem;
+                loadItemView (item);
             });
         }
 
@@ -105,7 +105,7 @@ namespace Drives
                     var child = child_item as ListDriveItem;
                     if (child.dbus_path == o) {
                         // Refresh contents if selected
-                        if (o == driveGetSelected ()) {
+                        if (o == driveGetPathSelected ()) {
                             refresh_selected (child);
                         }
                         // Refresh 'umount' button
@@ -119,49 +119,49 @@ namespace Drives
         }
 
         public ListDriveItem driveAdd (string o) {
-            var drive_item = new ListDriveItem (o);
-            this.root.add (drive_item);
-            return drive_item;
+            var item = new ListDriveItem (o);
+            this.root.add (item);
+            return item;
         }
 
         public void driveRemove (string o) {
-            var selected = driveGetSelected ();
+            var path_selected = driveGetPathSelected ();
             loadDrives ();
-            driveSelectPath (selected);
+            driveSelectPath (path_selected);
         }
 
-        public string driveGetSelected () {
+        public string driveGetPathSelected () {
             foreach (var child_item in this.root.children) {
-                var child = child_item as ListDriveItem;
-                if (child.is_selected) {
-                    return child.dbus_path;
+                var item = child_item as ListDriveItem;
+                if (item.is_selected) {
+                    return item.dbus_path;
                     break;
                 }
             }
             return "";
         }
 
-        public void driveSelectedClean () {
+        public void driveCleanSelected () {
             foreach (var child_item in this.root.children) {
-                var child = child_item as ListDriveItem;
-                if (child.is_selected) {
-                    child.is_selected = false;
+                var item = child_item as ListDriveItem;
+                if (item.is_selected) {
+                    item.is_selected = false;
                     break;
                 }
             }
         }
 
         public void driveSelectPath (string path) {
-            driveSelectedClean ();
+            driveCleanSelected ();
             foreach (var child_item in this.root.children) {
-                var child = child_item as ListDriveItem;
-                if (child.dbus_path == path) {
-                    child.is_selected = true;
+                var item = child_item as ListDriveItem;
+                if (item.dbus_path == path) {
+                    item.is_selected = true;
                     this.selected = child_item;
                     break;
                 }
-                else if (child.is_file_system && path == "") {
-                    child.is_selected = true;
+                else if (item.is_file_system && path == "") {
+                    item.is_selected = true;
                     this.selected = child_item;
                     break;
                 }
@@ -288,15 +288,14 @@ namespace Drives
     {
         protected Gtk.Notebook view_switcher;
         protected Gtk.Box view_welcome;
-        protected Gtk.Box view_drive;
-        protected Gtk.Box view_partition;
         protected int page_welcome;
+        protected Gtk.Box view_drive;
         protected int page_drive;
+        protected Gtk.Box view_partition;
         protected int page_partition;
 
         protected Gtk.Image? drive_icon;
         protected Gtk.Label drive_name_label;
-        protected Gtk.Label drive_kind_label;
         protected Gtk.Label drive_serial_label;
         protected Gtk.Label drive_device_label;
         protected Gtk.Label drive_smart_label;
@@ -304,8 +303,6 @@ namespace Drives
         protected Gtk.Label drive_capacity_label;
         protected Gtk.Button drive_format_button;
         protected ulong drive_format_handler;
-        protected Gtk.Button drive_restore_button;
-        protected ulong drive_restore_handler;
 
         protected Gtk.Image? partition_icon;
         protected Gtk.Label partition_name_label;
@@ -319,7 +316,6 @@ namespace Drives
         protected Gtk.Label partition_resume_label;
         protected Gtk.DrawingArea details_usage_graphic_contents;
         protected int partition_percentage_used;
-        protected int partition_percentage_user;
         protected Gtk.Button partition_mount_button;
         protected ulong partition_mount_handler;
         protected Gtk.Button partition_files_button;
@@ -356,10 +352,7 @@ namespace Drives
             }
 
             drive_name_label.label = item.show_label;
-            drive_kind_label.label = _("Drive");
-
             drive_serial_label.label = device.DriveSerial;
-            drive_device_label.label = device.DeviceFile;
             if (device.DriveAtaSmartIsAvailable) {
                 drive_smart_label.label = _("Disk is healthy");
 
@@ -372,9 +365,9 @@ namespace Drives
             } else {
                 drive_smart_label.label = _("Not Supported");
             }
+            drive_device_label.label = device.DeviceFile;
 
             drive_partitioning_label.label = _("Unknown");
-
             var partitioning = device.PartitionTableScheme;
             if (partitioning == "none") drive_partitioning_label.label = _("None");
             else if (partitioning == "mbr") drive_partitioning_label.label = _("Master Boot Record");
@@ -384,10 +377,8 @@ namespace Drives
             drive_capacity_label.label = bytesToHuman ((long) device.DeviceSize);
 
             drive_format_button.visible = true;
-            drive_restore_button.visible = true;
             if (item.is_file_system) {
                 drive_format_button.visible = false;
-                drive_restore_button.visible = false;
             }
 
             view_switcher.set_current_page (page_drive);
@@ -461,7 +452,6 @@ namespace Drives
                 }
                 partition_resume_label.label = bytesToHuman(partition_disk_free)+_(" available");
                 partition_percentage_used = (int) (100 - ((partition_disk_free * 100) / partition_disk_space));
-                partition_percentage_user = 0;
                 details_usage_graphic_contents.queue_draw ();
             }
 
@@ -550,7 +540,7 @@ namespace Drives
             drive_name_label.halign = Gtk.Align.START;
             drive_name_label.valign = Gtk.Align.CENTER;
 
-            drive_kind_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11700'>%s</span>", _("Drive")));
+            var drive_kind_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11700'>%s</span>", _("Drive")));
             drive_kind_label.use_markup = true;
             drive_kind_label.halign = Gtk.Align.START;
             drive_kind_label.valign = Gtk.Align.CENTER;
@@ -600,26 +590,6 @@ namespace Drives
             drive_serial.pack_start (drive_serial_label, false, true, 0);
             content.pack_start (drive_serial, false, false, 2);
 
-            // Details device
-            var drive_device_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Device")));
-            drive_device_label_title.use_markup = true;
-            drive_device_label_title.halign = Gtk.Align.END;
-            drive_device_label_title.valign = Gtk.Align.CENTER;
-            drive_device_label_title.sensitive = false;
-
-            drive_device_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Device")));
-            drive_device_label.use_markup = true;
-            drive_device_label.halign = Gtk.Align.START;
-            drive_device_label.valign = Gtk.Align.CENTER;
-
-            var drive_device = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            drive_device.homogeneous = true;
-            drive_device.halign = Gtk.Align.CENTER;
-            drive_device.valign = Gtk.Align.CENTER;
-            drive_device.pack_start (drive_device_label_title, false, true, 5);
-            drive_device.pack_start (drive_device_label, false, true, 0);
-            content.pack_start (drive_device, false, false, 2);
-
             // Details SMART
             var drive_smart_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("SMART Status")));
             drive_smart_label_title.use_markup = true;
@@ -639,6 +609,26 @@ namespace Drives
             drive_smart.pack_start (drive_smart_label_title, false, true, 5);
             drive_smart.pack_start (drive_smart_label, false, true, 0);
             content.pack_start (drive_smart, false, false, 2);
+
+            // Details device
+            var drive_device_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Device")));
+            drive_device_label_title.use_markup = true;
+            drive_device_label_title.halign = Gtk.Align.END;
+            drive_device_label_title.valign = Gtk.Align.CENTER;
+            drive_device_label_title.sensitive = false;
+
+            drive_device_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Device")));
+            drive_device_label.use_markup = true;
+            drive_device_label.halign = Gtk.Align.START;
+            drive_device_label.valign = Gtk.Align.CENTER;
+
+            var drive_device = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+            drive_device.homogeneous = true;
+            drive_device.halign = Gtk.Align.CENTER;
+            drive_device.valign = Gtk.Align.CENTER;
+            drive_device.pack_start (drive_device_label_title, false, true, 5);
+            drive_device.pack_start (drive_device_label, false, true, 0);
+            content.pack_start (drive_device, false, false, 2);
 
             // Details partitioning
             var drive_partitioning_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Partitioning")));
@@ -689,7 +679,7 @@ namespace Drives
             bottom_buttons_box.valign = Gtk.Align.CENTER;
             drive_format_button = new Gtk.Button.with_label (" "+_("Format Drive")+" ");
             bottom_buttons_box.pack_start (drive_format_button, false, true, 5);
-            drive_format_button.clicked.connect (show_light_window);
+            drive_format_button.clicked.connect (show_format_window);
             content.pack_end (bottom_buttons_box, false, false, 10);
 
             // Options wrapper
@@ -950,7 +940,7 @@ namespace Drives
                 var cutBody = true;
                 drawBarLeftArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
                                 borderR, borderG, borderB, shineR, shineG, shineB);
-                if (partition_percentage_used > 99) {
+                if (partition_percentage_used >= 100) {
                     cutBody = false;
                     drawBarRightArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
                                 borderR, borderG, borderB, shineR, shineG, shineB);
@@ -1060,8 +1050,8 @@ namespace Drives
             ctx.fill ();
         }
 
-        private void show_light_window () {
-            var light_window = new Granite.Widgets.LightWindow (_("Format Drive"));
+        private void show_format_window () {
+            var light_window = new Granite.Widgets.LightWindow (_("Format Drive")+" ");
             light_window.width_request = 350;
 
             var notebook = new Granite.Widgets.StaticNotebook ();
