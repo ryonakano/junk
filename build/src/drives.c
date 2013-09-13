@@ -4183,34 +4183,22 @@ static void block1_data_unref (void * _userdata_) {
 
 static void __lambda5_ (Block1Data* _data1_) {
 	DrivesDriveDetails * self;
-	gchar* _tmp0_;
-	gchar* path;
-	DrivesDevice_if* _tmp1_;
-	DrivesDevice_if* _tmp2_;
+	DrivesDevice_if* _tmp0_;
+	gchar* _tmp1_;
+	gchar* _tmp2_;
 	gchar* _tmp3_;
 	gchar* _tmp4_;
 	gchar* _tmp5_;
-	gchar* _tmp6_ = NULL;
-	GError * _inner_error_ = NULL;
 	self = _data1_->self;
-	_tmp0_ = g_strdup ("");
-	path = _tmp0_;
-	_tmp1_ = _data1_->device;
-	_tmp2_ = _data1_->device;
-	_tmp3_ = drives_device_if_get_IdType (_tmp2_);
-	_tmp4_ = _tmp3_;
+	_tmp0_ = _data1_->device;
+	_tmp1_ = drives_device_if_get_DeviceFile (_tmp0_);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = _tmp2_;
+	_tmp4_ = g_strconcat ("udisks --mount ", _tmp3_, NULL);
 	_tmp5_ = _tmp4_;
-	drives_device_if_FilesystemMount (_tmp1_, _tmp5_, NULL, 0, &_tmp6_, &_inner_error_);
-	_g_free0 (path);
-	path = _tmp6_;
+	granite_services_system_execute_command (_tmp5_);
 	_g_free0 (_tmp5_);
-	if (_inner_error_ != NULL) {
-		_g_free0 (path);
-		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
-		g_clear_error (&_inner_error_);
-		return;
-	}
-	_g_free0 (path);
+	_g_free0 (_tmp3_);
 }
 
 

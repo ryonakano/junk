@@ -442,8 +442,7 @@ namespace Drives
 
             if (partition_mount_handler != 0) partition_mount_button.disconnect (partition_mount_handler);
             partition_mount_handler = partition_mount_button.clicked.connect (() => {
-                string path = "";
-                device.FilesystemMount (device.IdType, null, out path);
+                Granite.Services.System.execute_command ("udisks --mount "+device.DeviceFile);
             });
 
             var mount_point = partition_mount;
