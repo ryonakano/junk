@@ -90,6 +90,7 @@ typedef struct _Block1Data Block1Data;
 #define _g_regex_unref0(var) ((var == NULL) ? NULL : (var = (g_regex_unref (var), NULL)))
 #define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 #define _cairo_pattern_destroy0(var) ((var == NULL) ? NULL : (var = (cairo_pattern_destroy (var), NULL)))
+typedef struct _Block2Data Block2Data;
 
 struct _DrivesUDisk_ifIface {
 	GTypeInterface parent_iface;
@@ -226,6 +227,13 @@ struct _Block1Data {
 	DrivesDriveDetails * self;
 	DrivesDevice_if* device;
 	gchar* mount_point;
+};
+
+struct _Block2Data {
+	int _ref_count_;
+	DrivesDriveDetails * self;
+	GtkButton* format_format_button;
+	GtkCheckButton* format_accept_check;
 };
 
 
@@ -373,14 +381,14 @@ DrivesDrivesList* drives_drives_list_new (void);
 DrivesDrivesList* drives_drives_list_construct (GType object_type);
 DrivesDriveDetails* drives_drive_details_new (void);
 DrivesDriveDetails* drives_drive_details_construct (GType object_type);
-static void __lambda7_ (DrivesDrivesPlug* self, GraniteWidgetsSourceListItem* o);
+static void __lambda8_ (DrivesDrivesPlug* self, GraniteWidgetsSourceListItem* o);
 GType drives_list_drive_item_get_type (void) G_GNUC_CONST;
 void drives_drives_plug_loadItemView (DrivesDrivesPlug* self, DrivesListDriveItem* item);
 void drives_drives_list_driveCleanSelected (DrivesDrivesList* self);
 void drives_list_drive_item_set_is_selected (DrivesListDriveItem* self, gboolean value);
-static void ___lambda7__granite_widgets_source_list_item_selected (GraniteWidgetsSourceList* _sender, GraniteWidgetsSourceListItem* item, gpointer self);
-static void __lambda8_ (DrivesDrivesPlug* self, DrivesListDriveItem* o);
-static void ___lambda8__drives_drives_list_refresh_selected (DrivesDrivesList* _sender, DrivesListDriveItem* item, gpointer self);
+static void ___lambda8__granite_widgets_source_list_item_selected (GraniteWidgetsSourceList* _sender, GraniteWidgetsSourceListItem* item, gpointer self);
+static void __lambda9_ (DrivesDrivesPlug* self, DrivesListDriveItem* o);
+static void ___lambda9__drives_drives_list_refresh_selected (DrivesDrivesList* _sender, DrivesListDriveItem* item, gpointer self);
 const gchar* drives_list_drive_item_get_dbus_path (DrivesListDriveItem* self);
 void drives_drive_details_loadPartitionInformation (DrivesDriveDetails* self, DrivesListDriveItem* o);
 void drives_drive_details_loadDriveInformation (DrivesDriveDetails* self, DrivesListDriveItem* o);
@@ -437,10 +445,10 @@ void drives_drive_details_constructViewPartition (DrivesDriveDetails* self);
 gchar* drives_drive_details_bytesToHuman (DrivesDriveDetails* self, glong b);
 static Block1Data* block1_data_ref (Block1Data* _data1_);
 static void block1_data_unref (void * _userdata_);
-static void __lambda5_ (Block1Data* _data1_);
-static void ___lambda5__gtk_button_clicked (GtkButton* _sender, gpointer self);
 static void __lambda6_ (Block1Data* _data1_);
 static void ___lambda6__gtk_button_clicked (GtkButton* _sender, gpointer self);
+static void __lambda7_ (Block1Data* _data1_);
+static void ___lambda7__gtk_button_clicked (GtkButton* _sender, gpointer self);
 static void drives_drive_details_show_format_window (DrivesDriveDetails* self);
 static void _drives_drive_details_show_format_window_gtk_button_clicked (GtkButton* _sender, gpointer self);
 static gboolean drives_drive_details_draw_usage_bar (DrivesDriveDetails* self, GtkWidget* da, cairo_t* ctx);
@@ -449,6 +457,10 @@ gdouble drives_drive_details_unit (DrivesDriveDetails* self, gdouble color);
 void drives_drive_details_drawBarLeftArc (DrivesDriveDetails* self, cairo_t* ctx, gint radius, gint x0, gint x1, gint y0, gint y1, gint y2, gdouble backR, gdouble backG, gdouble backB, gdouble borderR, gdouble borderG, gdouble borderB, gdouble shineR, gdouble shineG, gdouble shineB);
 void drives_drive_details_drawBarRightArc (DrivesDriveDetails* self, cairo_t* ctx, gint radius, gint x0, gint x1, gint y0, gint y1, gint y2, gdouble backR, gdouble backG, gdouble backB, gdouble borderR, gdouble borderG, gdouble borderB, gdouble shineR, gdouble shineG, gdouble shineB);
 void drives_drive_details_drawBarBody (DrivesDriveDetails* self, cairo_t* ctx, gint radius, gint x0, gint x1, gint y0, gint y1, gint y2, gdouble backR, gdouble backG, gdouble backB, gdouble borderR, gdouble borderG, gdouble borderB, gdouble shineR, gdouble shineG, gdouble shineB, gboolean cut);
+static Block2Data* block2_data_ref (Block2Data* _data2_);
+static void block2_data_unref (void * _userdata_);
+static void __lambda5_ (Block2Data* _data2_);
+static void ___lambda5__gtk_toggle_button_toggled (GtkToggleButton* _sender, gpointer self);
 static void drives_drive_details_finalize (GObject* obj);
 gint _vala_main (gchar** args, int args_length1);
 static void _vala_array_destroy (gpointer array, gint array_length, GDestroyNotify destroy_func);
@@ -2662,7 +2674,7 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static void __lambda7_ (DrivesDrivesPlug* self, GraniteWidgetsSourceListItem* o) {
+static void __lambda8_ (DrivesDrivesPlug* self, GraniteWidgetsSourceListItem* o) {
 	GraniteWidgetsSourceListItem* _tmp0_;
 	DrivesListDriveItem* _tmp1_;
 	DrivesListDriveItem* item;
@@ -2678,12 +2690,12 @@ static void __lambda7_ (DrivesDrivesPlug* self, GraniteWidgetsSourceListItem* o)
 }
 
 
-static void ___lambda7__granite_widgets_source_list_item_selected (GraniteWidgetsSourceList* _sender, GraniteWidgetsSourceListItem* item, gpointer self) {
-	__lambda7_ (self, item);
+static void ___lambda8__granite_widgets_source_list_item_selected (GraniteWidgetsSourceList* _sender, GraniteWidgetsSourceListItem* item, gpointer self) {
+	__lambda8_ (self, item);
 }
 
 
-static void __lambda8_ (DrivesDrivesPlug* self, DrivesListDriveItem* o) {
+static void __lambda9_ (DrivesDrivesPlug* self, DrivesListDriveItem* o) {
 	DrivesListDriveItem* _tmp0_;
 	DrivesListDriveItem* _tmp1_;
 	DrivesListDriveItem* item;
@@ -2696,8 +2708,8 @@ static void __lambda8_ (DrivesDrivesPlug* self, DrivesListDriveItem* o) {
 }
 
 
-static void ___lambda8__drives_drives_list_refresh_selected (DrivesDrivesList* _sender, DrivesListDriveItem* item, gpointer self) {
-	__lambda8_ (self, item);
+static void ___lambda9__drives_drives_list_refresh_selected (DrivesDrivesList* _sender, DrivesListDriveItem* item, gpointer self) {
+	__lambda9_ (self, item);
 }
 
 
@@ -2735,9 +2747,9 @@ DrivesDrivesPlug* drives_drives_plug_construct (GType object_type) {
 	gtk_paned_pack2 ((GtkPaned*) pane, (GtkWidget*) _tmp6_, TRUE, FALSE);
 	gtk_container_add ((GtkContainer*) self, (GtkWidget*) pane);
 	_tmp7_ = self->priv->source_list;
-	g_signal_connect_object ((GraniteWidgetsSourceList*) _tmp7_, "item-selected", (GCallback) ___lambda7__granite_widgets_source_list_item_selected, self, 0);
+	g_signal_connect_object ((GraniteWidgetsSourceList*) _tmp7_, "item-selected", (GCallback) ___lambda8__granite_widgets_source_list_item_selected, self, 0);
 	_tmp8_ = self->priv->source_list;
-	g_signal_connect_object (_tmp8_, "refresh-selected", (GCallback) ___lambda8__drives_drives_list_refresh_selected, self, 0);
+	g_signal_connect_object (_tmp8_, "refresh-selected", (GCallback) ___lambda9__drives_drives_list_refresh_selected, self, 0);
 	_g_object_unref0 (pane);
 	return self;
 }
@@ -4380,7 +4392,7 @@ static void block1_data_unref (void * _userdata_) {
 }
 
 
-static void __lambda5_ (Block1Data* _data1_) {
+static void __lambda6_ (Block1Data* _data1_) {
 	DrivesDriveDetails * self;
 	DrivesDevice_if* _tmp0_;
 	gchar* _tmp1_;
@@ -4401,8 +4413,8 @@ static void __lambda5_ (Block1Data* _data1_) {
 }
 
 
-static void ___lambda5__gtk_button_clicked (GtkButton* _sender, gpointer self) {
-	__lambda5_ (self);
+static void ___lambda6__gtk_button_clicked (GtkButton* _sender, gpointer self) {
+	__lambda6_ (self);
 }
 
 
@@ -4474,7 +4486,7 @@ static gchar* string_replace (const gchar* self, const gchar* old, const gchar* 
 }
 
 
-static void __lambda6_ (Block1Data* _data1_) {
+static void __lambda7_ (Block1Data* _data1_) {
 	DrivesDriveDetails * self;
 	const gchar* _tmp0_;
 	gchar* _tmp1_ = NULL;
@@ -4493,8 +4505,8 @@ static void __lambda6_ (Block1Data* _data1_) {
 }
 
 
-static void ___lambda6__gtk_button_clicked (GtkButton* _sender, gpointer self) {
-	__lambda6_ (self);
+static void ___lambda7__gtk_button_clicked (GtkButton* _sender, gpointer self) {
+	__lambda7_ (self);
 }
 
 
@@ -4813,7 +4825,7 @@ void drives_drive_details_loadPartitionInformation (DrivesDriveDetails* self, Dr
 		g_signal_handler_disconnect ((GObject*) _tmp101_, _tmp102_);
 	}
 	_tmp103_ = self->partition_mount_button;
-	_tmp104_ = g_signal_connect_data (_tmp103_, "clicked", (GCallback) ___lambda5__gtk_button_clicked, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
+	_tmp104_ = g_signal_connect_data (_tmp103_, "clicked", (GCallback) ___lambda6__gtk_button_clicked, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
 	self->partition_mount_handler = _tmp104_;
 	_tmp105_ = partition_mount;
 	_tmp106_ = g_strdup (_tmp105_);
@@ -4934,7 +4946,7 @@ void drives_drive_details_loadPartitionInformation (DrivesDriveDetails* self, Dr
 		g_signal_handler_disconnect ((GObject*) _tmp144_, _tmp145_);
 	}
 	_tmp146_ = self->partition_files_button;
-	_tmp147_ = g_signal_connect_data (_tmp146_, "clicked", (GCallback) ___lambda6__gtk_button_clicked, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
+	_tmp147_ = g_signal_connect_data (_tmp146_, "clicked", (GCallback) ___lambda7__gtk_button_clicked, block1_data_ref (_data1_), (GClosureNotify) block1_data_unref, 0);
 	self->partition_files_handler = _tmp147_;
 	_tmp148_ = self->view_switcher;
 	_tmp149_ = self->page_partition;
@@ -7077,7 +7089,54 @@ void drives_drive_details_drawBarBody (DrivesDriveDetails* self, cairo_t* ctx, g
 }
 
 
+static Block2Data* block2_data_ref (Block2Data* _data2_) {
+	g_atomic_int_inc (&_data2_->_ref_count_);
+	return _data2_;
+}
+
+
+static void block2_data_unref (void * _userdata_) {
+	Block2Data* _data2_;
+	_data2_ = (Block2Data*) _userdata_;
+	if (g_atomic_int_dec_and_test (&_data2_->_ref_count_)) {
+		DrivesDriveDetails * self;
+		self = _data2_->self;
+		_g_object_unref0 (_data2_->format_accept_check);
+		_g_object_unref0 (_data2_->format_format_button);
+		_g_object_unref0 (self);
+		g_slice_free (Block2Data, _data2_);
+	}
+}
+
+
+static void __lambda5_ (Block2Data* _data2_) {
+	DrivesDriveDetails * self;
+	GtkCheckButton* _tmp0_;
+	gboolean _tmp1_;
+	gboolean _tmp2_;
+	self = _data2_->self;
+	_tmp0_ = _data2_->format_accept_check;
+	_tmp1_ = gtk_toggle_button_get_active ((GtkToggleButton*) _tmp0_);
+	_tmp2_ = _tmp1_;
+	if (_tmp2_) {
+		GtkButton* _tmp3_;
+		_tmp3_ = _data2_->format_format_button;
+		gtk_widget_set_visible ((GtkWidget*) _tmp3_, TRUE);
+	} else {
+		GtkButton* _tmp4_;
+		_tmp4_ = _data2_->format_format_button;
+		gtk_widget_set_visible ((GtkWidget*) _tmp4_, FALSE);
+	}
+}
+
+
+static void ___lambda5__gtk_toggle_button_toggled (GtkToggleButton* _sender, gpointer self) {
+	__lambda5_ (self);
+}
+
+
 static void drives_drive_details_show_format_window (DrivesDriveDetails* self) {
+	Block2Data* _data2_;
 	DrivesListDriveItem* _tmp0_;
 	const gchar* _tmp1_;
 	const gchar* _tmp2_;
@@ -7096,43 +7155,141 @@ static void drives_drive_details_show_format_window (DrivesDriveDetails* self) {
 	GraniteWidgetsLightWindow* light_window;
 	GraniteWidgetsLightWindow* _tmp14_;
 	GraniteWidgetsLightWindow* _tmp15_;
-	GtkGrid* _tmp16_;
-	GtkGrid* format;
-	GraniteWidgetsStaticNotebook* _tmp17_;
-	GraniteWidgetsStaticNotebook* notebook;
-	GraniteWidgetsStaticNotebook* _tmp18_;
-	GraniteWidgetsStaticNotebook* _tmp19_;
-	const gchar* _tmp20_ = NULL;
+	const gchar* _tmp16_ = NULL;
+	gchar* _tmp17_ = NULL;
+	gchar* _tmp18_;
+	GtkLabel* _tmp19_;
+	GtkLabel* _tmp20_;
+	GtkLabel* format_label_title;
 	GtkLabel* _tmp21_;
 	GtkLabel* _tmp22_;
-	const gchar* _tmp23_ = NULL;
-	GtkLabel* _tmp24_;
-	GtkLabel* _tmp25_;
-	GraniteWidgetsStaticNotebook* _tmp26_;
+	GtkLabel* _tmp23_;
+	GtkEntry* _tmp24_;
+	GtkEntry* format_label_entry;
+	GtkEntry* _tmp25_;
+	GtkEntry* _tmp26_;
 	const gchar* _tmp27_ = NULL;
-	GtkLabel* _tmp28_;
-	GtkLabel* _tmp29_;
-	const gchar* _tmp30_ = NULL;
+	const gchar* _tmp28_ = NULL;
+	gchar* _tmp29_ = NULL;
+	gchar* _tmp30_;
 	GtkLabel* _tmp31_;
 	GtkLabel* _tmp32_;
-	GraniteWidgetsStaticNotebook* _tmp33_;
-	const gchar* _tmp34_ = NULL;
+	GtkLabel* format_partitioning_title;
+	GtkLabel* _tmp33_;
+	GtkLabel* _tmp34_;
 	GtkLabel* _tmp35_;
-	GtkLabel* _tmp36_;
-	const gchar* _tmp37_ = NULL;
-	GtkLabel* _tmp38_;
-	GtkLabel* _tmp39_;
-	GraniteWidgetsLightWindow* _tmp40_;
-	GraniteWidgetsStaticNotebook* _tmp41_;
-	GraniteWidgetsLightWindow* _tmp42_;
+	GtkComboBoxText* _tmp36_;
+	GtkComboBoxText* format_partitioning_drop;
+	GtkComboBoxText* _tmp37_;
+	GtkComboBoxText* _tmp38_;
+	GtkComboBoxText* _tmp39_;
+	const gchar* _tmp40_ = NULL;
+	gchar* _tmp41_ = NULL;
+	gchar* _tmp42_;
+	GtkLabel* _tmp43_;
+	GtkLabel* _tmp44_;
+	GtkLabel* format_type_title;
+	GtkLabel* _tmp45_;
+	GtkLabel* _tmp46_;
+	GtkLabel* _tmp47_;
+	GtkComboBoxText* _tmp48_;
+	GtkComboBoxText* format_type_drop;
+	GtkComboBoxText* _tmp49_;
+	GtkComboBoxText* _tmp50_;
+	GtkComboBoxText* _tmp51_;
+	GtkComboBoxText* _tmp52_;
+	GtkComboBoxText* _tmp53_;
+	const gchar* _tmp54_ = NULL;
+	gchar* _tmp55_;
+	gchar* _tmp56_;
+	gchar* _tmp57_;
+	gchar* _tmp58_;
+	DrivesListDriveItem* _tmp59_;
+	const gchar* _tmp60_;
+	const gchar* _tmp61_;
+	gchar* _tmp62_;
+	gchar* _tmp63_;
+	gchar* _tmp64_;
+	gchar* _tmp65_;
+	GtkButton* _tmp66_;
+	GtkButton* _tmp67_;
+	const gchar* _tmp68_ = NULL;
+	GtkCheckButton* _tmp69_;
+	GtkCheckButton* _tmp70_;
+	GtkBox* _tmp71_;
+	GtkBox* format_box;
+	GtkBox* _tmp72_;
+	GtkBox* _tmp73_;
+	GtkBox* _tmp74_;
+	GtkBox* _tmp75_;
+	GtkBox* _tmp76_;
+	GtkBox* _tmp77_;
+	GtkLabel* _tmp78_;
+	GtkBox* _tmp79_;
+	GtkEntry* _tmp80_;
+	GtkBox* _tmp81_;
+	GtkBox* _tmp82_;
+	GtkBox* _tmp83_;
+	GtkBox* _tmp84_;
+	GtkLabel* _tmp85_;
+	GtkBox* _tmp86_;
+	GtkComboBoxText* _tmp87_;
+	GtkBox* _tmp88_;
+	GtkBox* _tmp89_;
+	GtkBox* _tmp90_;
+	GtkBox* _tmp91_;
+	GtkLabel* _tmp92_;
+	GtkBox* _tmp93_;
+	GtkComboBoxText* _tmp94_;
+	GtkBox* _tmp95_;
+	GtkBox* _tmp96_;
+	GtkBox* _tmp97_;
+	GtkBox* _tmp98_;
+	GtkCheckButton* _tmp99_;
+	GtkBox* _tmp100_;
+	GtkBox* _tmp101_;
+	GtkBox* _tmp102_;
+	GtkBox* _tmp103_;
+	GtkButton* _tmp104_;
+	GraniteWidgetsStaticNotebook* _tmp105_;
+	GraniteWidgetsStaticNotebook* notebook;
+	GraniteWidgetsStaticNotebook* _tmp106_;
+	GraniteWidgetsStaticNotebook* _tmp107_;
+	GtkBox* _tmp108_;
+	const gchar* _tmp109_ = NULL;
+	GtkLabel* _tmp110_;
+	GtkLabel* _tmp111_;
+	GraniteWidgetsStaticNotebook* _tmp112_;
+	const gchar* _tmp113_ = NULL;
+	GtkLabel* _tmp114_;
+	GtkLabel* _tmp115_;
+	const gchar* _tmp116_ = NULL;
+	GtkLabel* _tmp117_;
+	GtkLabel* _tmp118_;
+	GraniteWidgetsStaticNotebook* _tmp119_;
+	const gchar* _tmp120_ = NULL;
+	GtkLabel* _tmp121_;
+	GtkLabel* _tmp122_;
+	const gchar* _tmp123_ = NULL;
+	GtkLabel* _tmp124_;
+	GtkLabel* _tmp125_;
+	GraniteWidgetsLightWindow* _tmp126_;
+	GraniteWidgetsStaticNotebook* _tmp127_;
+	GraniteWidgetsLightWindow* _tmp128_;
+	GtkButton* _tmp129_;
 	GError * _inner_error_ = NULL;
 	g_return_if_fail (self != NULL);
+	_data2_ = g_slice_new0 (Block2Data);
+	_data2_->_ref_count_ = 1;
+	_data2_->self = g_object_ref (self);
 	_tmp0_ = self->item;
 	_tmp1_ = drives_list_drive_item_get_dbus_path (_tmp0_);
 	_tmp2_ = _tmp1_;
 	_tmp3_ = g_initable_new (DRIVES_TYPE_DEVICE_IF_PROXY, NULL, &_inner_error_, "g-flags", 0, "g-name", "org.freedesktop.UDisks", "g-bus-type", G_BUS_TYPE_SYSTEM, "g-object-path", _tmp2_, "g-interface-name", "org.freedesktop.UDisks.Device", NULL);
 	device = (DrivesDevice_if*) _tmp3_;
 	if (_inner_error_ != NULL) {
+		block2_data_unref (_data2_);
+		_data2_ = NULL;
 		g_critical ("file %s: line %d: uncaught error: %s (%s, %d)", __FILE__, __LINE__, _inner_error_->message, g_quark_to_string (_inner_error_->domain), _inner_error_->code);
 		g_clear_error (&_inner_error_);
 		return;
@@ -7155,59 +7312,222 @@ static void drives_drive_details_show_format_window (DrivesDriveDetails* self) {
 	g_object_set ((GtkWidget*) _tmp14_, "width-request", 350, NULL);
 	_tmp15_ = light_window;
 	g_object_set ((GtkWindow*) _tmp15_, "window-position", GTK_WIN_POS_CENTER, NULL);
-	_tmp16_ = (GtkGrid*) gtk_grid_new ();
-	g_object_ref_sink (_tmp16_);
-	format = _tmp16_;
-	_tmp17_ = granite_widgets_static_notebook_new (TRUE);
-	g_object_ref_sink (_tmp17_);
-	notebook = _tmp17_;
-	_tmp18_ = notebook;
-	g_object_set ((GtkWidget*) _tmp18_, "margin", 12, NULL);
-	_tmp19_ = notebook;
-	_tmp20_ = _ ("TODO: One click formatting");
-	_tmp21_ = (GtkLabel*) gtk_label_new (_tmp20_);
-	g_object_ref_sink (_tmp21_);
-	_tmp22_ = _tmp21_;
-	_tmp23_ = _ ("Format");
-	_tmp24_ = (GtkLabel*) gtk_label_new (_tmp23_);
+	_tmp16_ = _ ("Volume Label");
+	_tmp17_ = g_markup_printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _tmp16_);
+	_tmp18_ = _tmp17_;
+	_tmp19_ = (GtkLabel*) gtk_label_new (_tmp18_);
+	g_object_ref_sink (_tmp19_);
+	_tmp20_ = _tmp19_;
+	_g_free0 (_tmp18_);
+	format_label_title = _tmp20_;
+	_tmp21_ = format_label_title;
+	gtk_label_set_use_markup (_tmp21_, TRUE);
+	_tmp22_ = format_label_title;
+	gtk_widget_set_halign ((GtkWidget*) _tmp22_, GTK_ALIGN_START);
+	_tmp23_ = format_label_title;
+	gtk_widget_set_valign ((GtkWidget*) _tmp23_, GTK_ALIGN_CENTER);
+	_tmp24_ = (GtkEntry*) gtk_entry_new ();
 	g_object_ref_sink (_tmp24_);
-	_tmp25_ = _tmp24_;
-	granite_widgets_static_notebook_append_page (_tmp19_, (GtkWidget*) _tmp22_, _tmp25_);
-	_g_object_unref0 (_tmp25_);
-	_g_object_unref0 (_tmp22_);
-	_tmp26_ = notebook;
-	_tmp27_ = _ ("TODO: Allow basic partitioning");
-	_tmp28_ = (GtkLabel*) gtk_label_new (_tmp27_);
-	g_object_ref_sink (_tmp28_);
-	_tmp29_ = _tmp28_;
-	_tmp30_ = _ ("Partitions");
+	format_label_entry = _tmp24_;
+	_tmp25_ = format_label_entry;
+	gtk_widget_set_hexpand ((GtkWidget*) _tmp25_, TRUE);
+	_tmp26_ = format_label_entry;
+	_tmp27_ = _ ("PARTITION");
+	gtk_entry_set_text (_tmp26_, _tmp27_);
+	_tmp28_ = _ ("Partitioning");
+	_tmp29_ = g_markup_printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _tmp28_);
+	_tmp30_ = _tmp29_;
 	_tmp31_ = (GtkLabel*) gtk_label_new (_tmp30_);
 	g_object_ref_sink (_tmp31_);
 	_tmp32_ = _tmp31_;
-	granite_widgets_static_notebook_append_page (_tmp26_, (GtkWidget*) _tmp29_, _tmp32_);
-	_g_object_unref0 (_tmp32_);
-	_g_object_unref0 (_tmp29_);
-	_tmp33_ = notebook;
-	_tmp34_ = _ ("TODO: dd images to drive");
-	_tmp35_ = (GtkLabel*) gtk_label_new (_tmp34_);
-	g_object_ref_sink (_tmp35_);
-	_tmp36_ = _tmp35_;
-	_tmp37_ = _ ("Restore");
-	_tmp38_ = (GtkLabel*) gtk_label_new (_tmp37_);
-	g_object_ref_sink (_tmp38_);
-	_tmp39_ = _tmp38_;
-	granite_widgets_static_notebook_append_page (_tmp33_, (GtkWidget*) _tmp36_, _tmp39_);
-	_g_object_unref0 (_tmp39_);
-	_g_object_unref0 (_tmp36_);
-	_tmp40_ = light_window;
-	_tmp41_ = notebook;
-	granite_widgets_decorated_window_add ((GraniteWidgetsDecoratedWindow*) _tmp40_, (GtkWidget*) _tmp41_);
-	_tmp42_ = light_window;
-	gtk_widget_show_all ((GtkWidget*) _tmp42_);
+	_g_free0 (_tmp30_);
+	format_partitioning_title = _tmp32_;
+	_tmp33_ = format_partitioning_title;
+	gtk_label_set_use_markup (_tmp33_, TRUE);
+	_tmp34_ = format_partitioning_title;
+	gtk_widget_set_halign ((GtkWidget*) _tmp34_, GTK_ALIGN_START);
+	_tmp35_ = format_partitioning_title;
+	gtk_widget_set_valign ((GtkWidget*) _tmp35_, GTK_ALIGN_CENTER);
+	_tmp36_ = (GtkComboBoxText*) gtk_combo_box_text_new ();
+	g_object_ref_sink (_tmp36_);
+	format_partitioning_drop = _tmp36_;
+	_tmp37_ = format_partitioning_drop;
+	gtk_combo_box_text_append (_tmp37_, "mbr", "Master Boot Record");
+	_tmp38_ = format_partitioning_drop;
+	gtk_combo_box_text_append (_tmp38_, "gpt", "GUID Partition Table");
+	_tmp39_ = format_partitioning_drop;
+	gtk_combo_box_set_active ((GtkComboBox*) _tmp39_, 0);
+	_tmp40_ = _ ("Type");
+	_tmp41_ = g_markup_printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _tmp40_);
+	_tmp42_ = _tmp41_;
+	_tmp43_ = (GtkLabel*) gtk_label_new (_tmp42_);
+	g_object_ref_sink (_tmp43_);
+	_tmp44_ = _tmp43_;
+	_g_free0 (_tmp42_);
+	format_type_title = _tmp44_;
+	_tmp45_ = format_type_title;
+	gtk_label_set_use_markup (_tmp45_, TRUE);
+	_tmp46_ = format_type_title;
+	gtk_widget_set_halign ((GtkWidget*) _tmp46_, GTK_ALIGN_START);
+	_tmp47_ = format_type_title;
+	gtk_widget_set_valign ((GtkWidget*) _tmp47_, GTK_ALIGN_CENTER);
+	_tmp48_ = (GtkComboBoxText*) gtk_combo_box_text_new ();
+	g_object_ref_sink (_tmp48_);
+	format_type_drop = _tmp48_;
+	_tmp49_ = format_type_drop;
+	gtk_combo_box_text_append (_tmp49_, "vfat", "FAT32");
+	_tmp50_ = format_type_drop;
+	gtk_combo_box_text_append (_tmp50_, "ext4", "EXT4");
+	_tmp51_ = format_type_drop;
+	gtk_combo_box_text_append (_tmp51_, "ntfs", "NTFS");
+	_tmp52_ = format_type_drop;
+	gtk_combo_box_text_append (_tmp52_, "hfsplus", "HFS+");
+	_tmp53_ = format_type_drop;
+	gtk_combo_box_set_active ((GtkComboBox*) _tmp53_, 0);
+	_tmp54_ = _ ("Format");
+	_tmp55_ = g_strconcat (" ", _tmp54_, NULL);
+	_tmp56_ = _tmp55_;
+	_tmp57_ = g_strconcat (_tmp56_, " ", NULL);
+	_tmp58_ = _tmp57_;
+	_tmp59_ = self->item;
+	_tmp60_ = drives_list_drive_item_get_show_label (_tmp59_);
+	_tmp61_ = _tmp60_;
+	_tmp62_ = g_strconcat (_tmp58_, _tmp61_, NULL);
+	_tmp63_ = _tmp62_;
+	_tmp64_ = g_strconcat (_tmp63_, " ", NULL);
+	_tmp65_ = _tmp64_;
+	_tmp66_ = (GtkButton*) gtk_button_new_with_label (_tmp65_);
+	g_object_ref_sink (_tmp66_);
+	_tmp67_ = _tmp66_;
+	_g_free0 (_tmp65_);
+	_g_free0 (_tmp63_);
+	_g_free0 (_tmp58_);
+	_g_free0 (_tmp56_);
+	_data2_->format_format_button = _tmp67_;
+	_tmp68_ = _ ("I understand that performing a format all the data in the drive will b" \
+"e erased.");
+	_tmp69_ = (GtkCheckButton*) gtk_check_button_new_with_label (_tmp68_);
+	g_object_ref_sink (_tmp69_);
+	_data2_->format_accept_check = _tmp69_;
+	_tmp70_ = _data2_->format_accept_check;
+	g_signal_connect_data ((GtkToggleButton*) _tmp70_, "toggled", (GCallback) ___lambda5__gtk_toggle_button_toggled, block2_data_ref (_data2_), (GClosureNotify) block2_data_unref, 0);
+	_tmp71_ = (GtkBox*) gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+	g_object_ref_sink (_tmp71_);
+	format_box = _tmp71_;
+	_tmp72_ = format_box;
+	gtk_widget_set_hexpand ((GtkWidget*) _tmp72_, TRUE);
+	_tmp73_ = format_box;
+	gtk_widget_set_valign ((GtkWidget*) _tmp73_, GTK_ALIGN_CENTER);
+	_tmp74_ = format_box;
+	_tmp75_ = (GtkBox*) gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	g_object_ref_sink (_tmp75_);
+	_tmp76_ = _tmp75_;
+	gtk_box_pack_start (_tmp74_, (GtkWidget*) _tmp76_, FALSE, FALSE, (guint) 5);
+	_g_object_unref0 (_tmp76_);
+	_tmp77_ = format_box;
+	_tmp78_ = format_label_title;
+	gtk_box_pack_start (_tmp77_, (GtkWidget*) _tmp78_, FALSE, TRUE, (guint) 2);
+	_tmp79_ = format_box;
+	_tmp80_ = format_label_entry;
+	gtk_box_pack_start (_tmp79_, (GtkWidget*) _tmp80_, FALSE, TRUE, (guint) 2);
+	_tmp81_ = format_box;
+	_tmp82_ = (GtkBox*) gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	g_object_ref_sink (_tmp82_);
+	_tmp83_ = _tmp82_;
+	gtk_box_pack_start (_tmp81_, (GtkWidget*) _tmp83_, FALSE, FALSE, (guint) 5);
+	_g_object_unref0 (_tmp83_);
+	_tmp84_ = format_box;
+	_tmp85_ = format_partitioning_title;
+	gtk_box_pack_start (_tmp84_, (GtkWidget*) _tmp85_, FALSE, TRUE, (guint) 2);
+	_tmp86_ = format_box;
+	_tmp87_ = format_partitioning_drop;
+	gtk_box_pack_start (_tmp86_, (GtkWidget*) _tmp87_, FALSE, TRUE, (guint) 2);
+	_tmp88_ = format_box;
+	_tmp89_ = (GtkBox*) gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	g_object_ref_sink (_tmp89_);
+	_tmp90_ = _tmp89_;
+	gtk_box_pack_start (_tmp88_, (GtkWidget*) _tmp90_, FALSE, FALSE, (guint) 5);
+	_g_object_unref0 (_tmp90_);
+	_tmp91_ = format_box;
+	_tmp92_ = format_type_title;
+	gtk_box_pack_start (_tmp91_, (GtkWidget*) _tmp92_, FALSE, TRUE, (guint) 2);
+	_tmp93_ = format_box;
+	_tmp94_ = format_type_drop;
+	gtk_box_pack_start (_tmp93_, (GtkWidget*) _tmp94_, FALSE, TRUE, (guint) 2);
+	_tmp95_ = format_box;
+	_tmp96_ = (GtkBox*) gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	g_object_ref_sink (_tmp96_);
+	_tmp97_ = _tmp96_;
+	gtk_box_pack_start (_tmp95_, (GtkWidget*) _tmp97_, FALSE, FALSE, (guint) 5);
+	_g_object_unref0 (_tmp97_);
+	_tmp98_ = format_box;
+	_tmp99_ = _data2_->format_accept_check;
+	gtk_box_pack_start (_tmp98_, (GtkWidget*) _tmp99_, FALSE, TRUE, (guint) 2);
+	_tmp100_ = format_box;
+	_tmp101_ = (GtkBox*) gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+	g_object_ref_sink (_tmp101_);
+	_tmp102_ = _tmp101_;
+	gtk_box_pack_start (_tmp100_, (GtkWidget*) _tmp102_, FALSE, FALSE, (guint) 5);
+	_g_object_unref0 (_tmp102_);
+	_tmp103_ = format_box;
+	_tmp104_ = _data2_->format_format_button;
+	gtk_box_pack_start (_tmp103_, (GtkWidget*) _tmp104_, FALSE, TRUE, (guint) 2);
+	_tmp105_ = granite_widgets_static_notebook_new (TRUE);
+	g_object_ref_sink (_tmp105_);
+	notebook = _tmp105_;
+	_tmp106_ = notebook;
+	g_object_set ((GtkWidget*) _tmp106_, "margin", 12, NULL);
+	_tmp107_ = notebook;
+	_tmp108_ = format_box;
+	_tmp109_ = _ ("Format");
+	_tmp110_ = (GtkLabel*) gtk_label_new (_tmp109_);
+	g_object_ref_sink (_tmp110_);
+	_tmp111_ = _tmp110_;
+	granite_widgets_static_notebook_append_page (_tmp107_, (GtkWidget*) _tmp108_, _tmp111_);
+	_g_object_unref0 (_tmp111_);
+	_tmp112_ = notebook;
+	_tmp113_ = _ ("TODO: Allow basic partitioning");
+	_tmp114_ = (GtkLabel*) gtk_label_new (_tmp113_);
+	g_object_ref_sink (_tmp114_);
+	_tmp115_ = _tmp114_;
+	_tmp116_ = _ ("Partitions");
+	_tmp117_ = (GtkLabel*) gtk_label_new (_tmp116_);
+	g_object_ref_sink (_tmp117_);
+	_tmp118_ = _tmp117_;
+	granite_widgets_static_notebook_append_page (_tmp112_, (GtkWidget*) _tmp115_, _tmp118_);
+	_g_object_unref0 (_tmp118_);
+	_g_object_unref0 (_tmp115_);
+	_tmp119_ = notebook;
+	_tmp120_ = _ ("TODO: dd images to drive");
+	_tmp121_ = (GtkLabel*) gtk_label_new (_tmp120_);
+	g_object_ref_sink (_tmp121_);
+	_tmp122_ = _tmp121_;
+	_tmp123_ = _ ("Restore");
+	_tmp124_ = (GtkLabel*) gtk_label_new (_tmp123_);
+	g_object_ref_sink (_tmp124_);
+	_tmp125_ = _tmp124_;
+	granite_widgets_static_notebook_append_page (_tmp119_, (GtkWidget*) _tmp122_, _tmp125_);
+	_g_object_unref0 (_tmp125_);
+	_g_object_unref0 (_tmp122_);
+	_tmp126_ = light_window;
+	_tmp127_ = notebook;
+	granite_widgets_decorated_window_add ((GraniteWidgetsDecoratedWindow*) _tmp126_, (GtkWidget*) _tmp127_);
+	_tmp128_ = light_window;
+	gtk_widget_show_all ((GtkWidget*) _tmp128_);
+	_tmp129_ = _data2_->format_format_button;
+	gtk_widget_set_visible ((GtkWidget*) _tmp129_, FALSE);
 	_g_object_unref0 (notebook);
-	_g_object_unref0 (format);
+	_g_object_unref0 (format_box);
+	_g_object_unref0 (format_type_drop);
+	_g_object_unref0 (format_type_title);
+	_g_object_unref0 (format_partitioning_drop);
+	_g_object_unref0 (format_partitioning_title);
+	_g_object_unref0 (format_label_entry);
+	_g_object_unref0 (format_label_title);
 	_g_object_unref0 (light_window);
 	_g_object_unref0 (device);
+	block2_data_unref (_data2_);
+	_data2_ = NULL;
 }
 
 

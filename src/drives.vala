@@ -1067,30 +1067,75 @@ namespace Drives
             var light_window = new Granite.Widgets.LightWindow (_("Format")+": "+item.show_label);
             light_window.width_request = 350;
             light_window.window_position = Gtk.WindowPosition.CENTER;
-/*
-            var grid = new Gtk.Box ();
-            
 
-            var bottom_buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            bottom_buttons_box.halign = Gtk.Align.CENTER;
-            bottom_buttons_box.valign = Gtk.Align.CENTER;
-            partition_files_button = new Gtk.Button.with_label (" "+_("View Files")+" ");
-            bottom_buttons_box.pack_start (partition_files_button, false, true, 5);
-            partition_mount_button = new Gtk.Button.with_label (" "+_("Mount")+" ");
-            bottom_buttons_box.pack_start (partition_mount_button, false, true, 5);
-            content.pack_end (bottom_buttons_box, false, false, 10);
-*/
-            var format = new Gtk.Grid ();
+            // Format View
+            var format_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Volume Label")));
+            format_label_title.use_markup = true;
+            format_label_title.halign = Gtk.Align.START;
+            format_label_title.valign = Gtk.Align.CENTER;
 
+            var format_label_entry = new Gtk.Entry ();
+            format_label_entry.hexpand = true;
+            format_label_entry.text = _("PARTITION");
+
+            var format_partitioning_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Partitioning")));
+            format_partitioning_title.use_markup = true;
+            format_partitioning_title.halign = Gtk.Align.START;
+            format_partitioning_title.valign = Gtk.Align.CENTER;
+
+            var format_partitioning_drop = new Gtk.ComboBoxText ();
+            format_partitioning_drop.append ("mbr", "Master Boot Record");
+            format_partitioning_drop.append ("gpt", "GUID Partition Table");
+            format_partitioning_drop.active = 0;
+
+            var format_type_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Type")));
+            format_type_title.use_markup = true;
+            format_type_title.halign = Gtk.Align.START;
+            format_type_title.valign = Gtk.Align.CENTER;
+
+            var format_type_drop = new Gtk.ComboBoxText ();
+            format_type_drop.append ("vfat", "FAT32");
+            format_type_drop.append ("ext4", "EXT4");
+            format_type_drop.append ("ntfs", "NTFS");
+            format_type_drop.append ("hfsplus", "HFS+");
+            format_type_drop.active = 0;
+
+            var format_format_button = new Gtk.Button.with_label (" "+_("Format")+" "+item.show_label+" ");
+
+            var format_accept_check = new Gtk.CheckButton.with_label (_("I understand that performing a format all the data in the drive will be erased."));
+            format_accept_check.toggled.connect (() => {
+                if (format_accept_check.active) format_format_button.visible = true;
+                else format_format_button.visible = false;
+            });
+
+            var format_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            format_box.hexpand = true;
+            //format_box.halign = Gtk.Align.START;
+            format_box.valign = Gtk.Align.CENTER;
+            format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
+            format_box.pack_start (format_label_title, false, true, 2);
+            format_box.pack_start (format_label_entry, false, true, 2);
+            format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
+            format_box.pack_start (format_partitioning_title, false, true, 2);
+            format_box.pack_start (format_partitioning_drop, false, true, 2);
+            format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
+            format_box.pack_start (format_type_title, false, true, 2);
+            format_box.pack_start (format_type_drop, false, true, 2);
+            format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
+            format_box.pack_start (format_accept_check, false, true, 2);
+            format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
+            format_box.pack_start (format_format_button, false, true, 2);
+
+            // Notebook
             var notebook = new Granite.Widgets.StaticNotebook ();
             notebook.margin = 12;
-            notebook.append_page (new Gtk.Label (_("TODO: One click formatting")), new Gtk.Label (_("Format")));
+            notebook.append_page (format_box, new Gtk.Label (_("Format")));
             notebook.append_page (new Gtk.Label (_("TODO: Allow basic partitioning")), new Gtk.Label (_("Partitions")));
             notebook.append_page (new Gtk.Label (_("TODO: dd images to drive")), new Gtk.Label (_("Restore")));
 
-
             light_window.add (notebook);
             light_window.show_all ();
+            format_format_button.visible = false;
 /*
         var light_window_notebook = new Granite.Widgets.StaticNotebook ();
         var entry = new Gtk.Entry ();
