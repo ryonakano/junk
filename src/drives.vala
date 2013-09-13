@@ -65,23 +65,23 @@ namespace Drives
             // Handle events
             source_list.item_selected.connect ((o) => {
                 var item = o as ListDriveItem;
-                loadItemView (item);
-                source_list.driveCleanSelected ();
+                load_item_view (item);
+                source_list.drive_clean_selected ();
                 item.is_selected = true;
             });
 
             source_list.refresh_selected.connect ((o) => {
                 var item = o as ListDriveItem;
-                loadItemView (item);
+                load_item_view (item);
             });
         }
 
-        public void loadItemView (ListDriveItem item) {
+        public void load_item_view (ListDriveItem item) {
             var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
             if (device.DeviceIsPartition) {
-                content_area.loadPartitionInformation (item);
+                content_area.load_partition_information (item);
             } else {
-                content_area.loadDriveInformation (item);
+                content_area.load_drive_information (item);
             }
         }
     }
@@ -98,42 +98,42 @@ namespace Drives
             // Get devices
             udisk = Bus.get_proxy_sync<UDisk_if> (BusType.SYSTEM, "org.freedesktop.UDisks","/org/freedesktop/UDisks");
             udisk.DeviceAdded.connect ((o) => {
-                driveAdd (o);
+                drive_add (o);
             });
             udisk.DeviceRemoved.connect ((o) => {
-                driveRemove (o);
+                drive_remove (o);
             });
             udisk.DeviceChanged.connect ((o) => {
                 foreach (var child_item in this.root.children) {
                     var child = child_item as ListDriveItem;
                     if (child.dbus_path == o) {
                         // Refresh contents if selected
-                        if (o == driveGetPathSelected ()) {
+                        if (o == drive_get_path_selected ()) {
                             refresh_selected (child);
                         }
                         // Refresh 'umount' button
-                        child.reloadEjectButton ();
+                        child.reload_eject_button ();
                         break;
                     }
                 }
             });
 
-            loadDrives ();
+            load_drives ();
         }
 
-        public ListDriveItem driveAdd (string o) {
+        public ListDriveItem drive_add (string o) {
             var item = new ListDriveItem (o);
             this.root.add (item);
             return item;
         }
 
-        public void driveRemove (string o) {
-            var path_selected = driveGetPathSelected ();
-            loadDrives ();
-            driveSelectPath (path_selected);
+        public void drive_remove (string o) {
+            var path_selected = drive_get_path_selected ();
+            load_drives ();
+            drive_select_path (path_selected);
         }
 
-        public string driveGetPathSelected () {
+        public string drive_get_path_selected () {
             foreach (var child_item in this.root.children) {
                 var item = child_item as ListDriveItem;
                 if (item.is_selected) {
@@ -144,7 +144,7 @@ namespace Drives
             return "";
         }
 
-        public void driveCleanSelected () {
+        public void drive_clean_selected () {
             foreach (var child_item in this.root.children) {
                 var item = child_item as ListDriveItem;
                 if (item.is_selected) {
@@ -154,8 +154,8 @@ namespace Drives
             }
         }
 
-        public void driveSelectPath (string path) {
-            driveCleanSelected ();
+        public void drive_select_path (string path) {
+            drive_clean_selected ();
             foreach (var child_item in this.root.children) {
                 var item = child_item as ListDriveItem;
                 if (item.dbus_path == path) {
@@ -171,27 +171,27 @@ namespace Drives
             }
         }
 
-        public void loadDrives () {
+        public void load_drives () {
             this.root.clear ();
 
             // Internal devices
-            loadDrivesBucle (true);
+            load_drives_bucle (true);
 
             // External devices (and mounted SD cards)
-            loadDrivesBucle (false);
+            load_drives_bucle (false);
 
             // TODO : Disks (!device.DeviceIsPartitionTable)
             // ...
         }
 
-        public void loadDrivesBucle (bool system_internal) {
+        public void load_drives_bucle (bool system_internal) {
             var devices = udisk.EnumerateDevices();
 
             // Internal devices
             foreach (ObjectPath o in devices) {
                 var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks",o);
                 if (device.DeviceIsPartitionTable && (device.DeviceIsSystemInternal == system_internal)) {
-                    var device_ref = driveAdd (o);
+                    var device_ref = drive_add (o);
 
                     // Device partitions
                     var serial = device.DriveSerial;
@@ -199,7 +199,7 @@ namespace Drives
                         foreach (ObjectPath xo in devices) {
                             var inner_device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks",xo);
                             if (serial == inner_device.DriveSerial && inner_device.DeviceIsPartition && counter == inner_device.PartitionNumber) {
-                                var inner_device_ref = driveAdd (xo);
+                                var inner_device_ref = drive_add (xo);
                                 if (inner_device_ref.is_file_system) device_ref.is_file_system = true;
                                 break;
                             }
@@ -222,10 +222,10 @@ namespace Drives
 
         public ListDriveItem (string o) {
             base ("");
-            loadFromPath (o);
+            load_from_path (o);
         }
 
-        public void loadFromPath (string o) {
+        public void load_from_path (string o) {
             dbus_path = o;
             var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", o);
 
@@ -263,24 +263,24 @@ namespace Drives
                 this.name = "        "+show_label;
             }
 
-            reloadEjectButton ();
+            reload_eject_button ();
         }
 
-        public void reloadEjectButton () {
+        public void reload_eject_button () {
             var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", dbus_path);
 
             if (device.DeviceIsPartition && !is_file_system) {
                 if (device.DeviceIsMounted && this.activatable == null) {
                     this.activatable = new ThemedIcon.with_default_fallbacks ("media-eject");
-                    this.action_activated.connect (buttonUnmountEvent);
+                    this.action_activated.connect (button_unmount_event);
                 } else {
                     this.activatable = null;
-                    this.action_activated.disconnect (buttonUnmountEvent);
+                    this.action_activated.disconnect (button_unmount_event);
                 }
             }
         }
 
-        public void buttonUnmountEvent (Granite.Widgets.SourceList.Item o) {
+        public void button_unmount_event (Granite.Widgets.SourceList.Item o) {
             var item = o as ListDriveItem;
             var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
             device.FilesystemUnmount (null);
@@ -340,9 +340,9 @@ namespace Drives
             view_switcher.show_border = false;
             view_switcher.expand = true;
 
-            constructViewWelcome ();
-            constructViewDrive ();
-            constructViewPartition ();
+            construct_view_welcome ();
+            construct_view_drive ();
+            construct_view_partition ();
 
             page_welcome = view_switcher.append_page (view_welcome, null);
             page_drive = view_switcher.append_page (view_drive, null);
@@ -351,7 +351,7 @@ namespace Drives
             this.add (view_switcher);
         }
 
-        public void loadDriveInformation (ListDriveItem o) {
+        public void load_drive_information (ListDriveItem o) {
             item = o;
             var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
 
@@ -387,7 +387,7 @@ namespace Drives
             else if (partitioning == "apm") partitioning_label = _("Apple Partition Map");
             drive_partitioning_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", partitioning_label);
 
-            drive_capacity_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", bytesToHuman ((long) device.DeviceSize));
+            drive_capacity_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", bytes_to_human ((long) device.DeviceSize));
 
             drive_format_button.visible = true;
             if (item.is_file_system) {
@@ -397,7 +397,7 @@ namespace Drives
             view_switcher.set_current_page (page_drive);
         }
 
-        public void loadPartitionInformation (ListDriveItem o) {
+        public void load_partition_information (ListDriveItem o) {
             item = o;
             var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
 
@@ -424,7 +424,7 @@ namespace Drives
             partition_usage_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", partition_usage);
             partition_device_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", device.DeviceFile);
             partition_mount_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", partition_mount);
-            partition_capacity_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", bytesToHuman ((long) device.PartitionSize));
+            partition_capacity_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", bytes_to_human ((long) device.PartitionSize));
 
             if (device.DeviceIsMounted) {
                 partition_mount_button.visible = false;
@@ -464,7 +464,7 @@ namespace Drives
                     // Mida d'un directori http://gezeiten.org/post/2009/04/Writing-Your-Own-GIO-Jobs
                     // Més fàcil : du -s /home/albert/
                 }
-                partition_resume_label.label = Markup.printf_escaped ("<span weight='medium' size='11000'>%s</span>", bytesToHuman(partition_disk_free)+_(" available"));
+                partition_resume_label.label = Markup.printf_escaped ("<span weight='medium' size='11000'>%s</span>", bytes_to_human(partition_disk_free)+_(" available"));
                 partition_percentage_used = (int) (100 - ((partition_disk_free * 100) / partition_disk_space));
                 details_usage_graphic_contents.queue_draw ();
             }
@@ -477,7 +477,7 @@ namespace Drives
             view_switcher.set_current_page (page_partition);
         }
 
-        public string bytesToHuman (long b) {
+        public string bytes_to_human (long b) {
             float size_total = b/1024f/1024f/1024f;                     // Bytes to GB
             string size_total_string = "";
             if (size_total < 1) {                                       // Less than 100MB
@@ -491,7 +491,7 @@ namespace Drives
             return size_total_string;
         }
 
-        public void constructViewWelcome () {
+        public void construct_view_welcome () {
             view_welcome = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             view_welcome.homogeneous = false;
 
@@ -536,7 +536,7 @@ namespace Drives
             view_welcome.pack_start (content, true, true, 0);
         }
 
-        public void constructViewDrive () {
+        public void construct_view_drive () {
             view_drive = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             view_drive.hexpand = true;
 
@@ -668,7 +668,7 @@ namespace Drives
             view_drive.pack_end (bottom_buttons_box, false, false, 10);
         }
 
-        public void constructViewPartition () {
+        public void construct_view_partition () {
             view_partition = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             view_partition.hexpand = true;
 
@@ -840,11 +840,11 @@ namespace Drives
             double borderR = unit(153);
             double borderG = unit(153);
             double borderB = unit(153);
-            drawBarLeftArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
+            draw_bar_left_arc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
                             borderR, borderG, borderB);
-            drawBarRightArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
+            draw_bar_right_arc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
                             borderR, borderG, borderB);
-            drawBarBody (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
+            draw_bar_body (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
                             borderR, borderG, borderB, false);
 
             // Draw disk usage
@@ -856,20 +856,20 @@ namespace Drives
                 borderG = unit(138);
                 borderB = unit(186);
                 var cutBody = true;
-                drawBarLeftArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
+                draw_bar_left_arc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
                                 borderR, borderG, borderB);
                 if (partition_percentage_used >= 100) {
                     cutBody = false;
-                    drawBarRightArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
+                    draw_bar_right_arc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
                                 borderR, borderG, borderB);
                 }
                 int dx1 = x0 + (((x1 - x0) * partition_percentage_used) / 100);
-                drawBarBody (ctx, radius, x0, dx1, y0, y1, y2, backR, backG, backB,
+                draw_bar_body (ctx, radius, x0, dx1, y0, y1, y2, backR, backG, backB,
                                 borderR, borderG, borderB, cutBody);
             }
 
             // Draw shine
-            drawShine (ctx, radius, x0, x1, y0, y1, y2);
+            draw_shine (ctx, radius, x0, x1, y0, y1, y2);
 
             return true;
         }
@@ -878,7 +878,7 @@ namespace Drives
             return (color/256);
         }
 
-        public void drawBarLeftArc (Cairo.Context ctx, int radius,
+        public void draw_bar_left_arc (Cairo.Context ctx, int radius,
                                         int x0, int x1, int y0, int y1, int y2,
                                         double backR, double backG, double backB,
                                         double borderR, double borderG, double borderB) {
@@ -899,7 +899,7 @@ namespace Drives
             ctx.stroke ();
         }
 
-        public void drawBarRightArc (Cairo.Context ctx, int radius,
+        public void draw_bar_right_arc (Cairo.Context ctx, int radius,
                                         int x0, int x1, int y0, int y1, int y2,
                                         double backR, double backG, double backB,
                                         double borderR, double borderG, double borderB) {
@@ -920,7 +920,7 @@ namespace Drives
             ctx.stroke ();
         }
 
-        public void drawBarBody (Cairo.Context ctx, int radius,
+        public void draw_bar_body (Cairo.Context ctx, int radius,
                                     int x0, int x1, int y0, int y1, int y2,
                                     double backR, double backG, double backB,
                                     double borderR, double borderG, double borderB, bool cut) {
@@ -957,7 +957,7 @@ namespace Drives
             ctx.fill ();
         }
 
-        private void drawShine (Cairo.Context ctx, int radius,
+        private void draw_shine (Cairo.Context ctx, int radius,
                                     int x0, int x1, int y0, int y1, int y2) {
             // Left Arc
             ctx.set_source_rgba (1, 1, 1, 0.5);
@@ -985,7 +985,7 @@ namespace Drives
             light_window.window_position = Gtk.WindowPosition.CENTER;
 
             // Format View
-            var format_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Volume Label")));
+            var format_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Volume Label")));
             format_label_title.use_markup = true;
             format_label_title.halign = Gtk.Align.START;
             format_label_title.valign = Gtk.Align.CENTER;
@@ -994,7 +994,7 @@ namespace Drives
             format_label_entry.hexpand = true;
             format_label_entry.text = _("PARTITION");
 
-            var format_partitioning_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Partitioning")));
+            var format_partitioning_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Partitioning")));
             format_partitioning_title.use_markup = true;
             format_partitioning_title.halign = Gtk.Align.START;
             format_partitioning_title.valign = Gtk.Align.CENTER;
@@ -1004,7 +1004,7 @@ namespace Drives
             format_partitioning_drop.append ("gpt", "GUID Partition Table");
             format_partitioning_drop.active = 0;
 
-            var format_type_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Type")));
+            var format_type_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Type")));
             format_type_title.use_markup = true;
             format_type_title.halign = Gtk.Align.START;
             format_type_title.valign = Gtk.Align.CENTER;
@@ -1016,9 +1016,14 @@ namespace Drives
             format_type_drop.append ("hfsplus", "HFS+");
             format_type_drop.active = 0;
 
+            var format_button_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+            format_button_box.halign = Gtk.Align.CENTER;
+            format_button_box.valign = Gtk.Align.CENTER;
             var format_format_button = new Gtk.Button.with_label (" "+_("Format")+" "+item.show_label+" ");
+            format_button_box.pack_start (format_format_button, false, true, 5);
 
-            var format_accept_check = new Gtk.CheckButton.with_label (_("I understand that performing a format all the data in the drive will be erased."));
+            var format_accept_check = new Gtk.CheckButton.with_label (
+                        _("I understand that performing a format all the data in the drive will be erased."));
             format_accept_check.toggled.connect (() => {
                 if (format_accept_check.active) format_format_button.visible = true;
                 else format_format_button.visible = false;
@@ -1026,7 +1031,6 @@ namespace Drives
 
             var format_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             format_box.hexpand = true;
-            //format_box.halign = Gtk.Align.START;
             format_box.valign = Gtk.Align.CENTER;
             format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
             format_box.pack_start (format_label_title, false, true, 2);
@@ -1040,7 +1044,9 @@ namespace Drives
             format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
             format_box.pack_start (format_accept_check, false, true, 2);
             format_box.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 5);
-            format_box.pack_start (format_format_button, false, true, 2);
+            format_box.pack_start (format_button_box, false, true, 2);
+
+
 
             // Notebook
             var notebook = new Granite.Widgets.StaticNotebook ();
@@ -1051,53 +1057,6 @@ namespace Drives
             light_window.add (notebook);
             light_window.show_all ();
             format_format_button.visible = false;
-/*
-        var light_window_notebook = new Granite.Widgets.StaticNotebook ();
-        var entry = new Gtk.Entry ();
-        var open_drop = new Gtk.ComboBoxText ();
-        var open_lbl = new LLabel ("Alwas Open Mpeg Video Files with Audience");
-
-        var grid = new Gtk.Grid ();
-        grid.attach (new Gtk.Image.from_icon_name ("video-x-generic", Gtk.IconSize.DIALOG), 0, 0, 1, 2);
-        grid.attach (entry, 1, 0, 1, 1);
-        grid.attach (new LLabel ("1.13 GB, Mpeg Video File"), 1, 1, 1, 1);
-
-        grid.attach (light_window_notebook, 0, 2, 2, 1);
-
-        var general = new Gtk.Grid ();
-        general.attach (new LLabel.markup ("<b>Info:</b>"), 0, 0, 2, 1);
-
-        general.attach (new LLabel.right ("Created:"), 0, 1, 1, 1);
-        general.attach (new LLabel.right ("Modified:"), 0, 2, 1, 1);
-        general.attach (new LLabel.right ("Opened:"), 0, 3, 1, 1);
-        general.attach (new LLabel.right ("Mimetype:"), 0, 4, 1, 1);
-        general.attach (new LLabel.right ("Location:"), 0, 5, 1, 1);
-
-        general.attach (new LLabel ("Today at 9:50 PM"), 1, 1, 1, 1);
-        general.attach (new LLabel ("Today at 9:50 PM"), 1, 2, 1, 1);
-        general.attach (new LLabel ("Today at 10:00 PM"), 1, 3, 1, 1);
-        general.attach (new LLabel ("video/mpeg"), 1, 4, 1, 1);
-        general.attach (new LLabel ("/home/daniel/Downloads"), 1, 5, 1, 1);
-
-        general.attach (new LLabel.markup ("<b>Open with:</b>"), 0, 6, 2, 1);
-        general.attach (open_drop, 0, 7, 2, 1);
-        general.attach (open_lbl, 0, 8, 2, 1);
-
-        light_window_notebook.append_page (general, new Gtk.Label ("General"));
-        light_window_notebook.append_page (new Gtk.Label ("More"), new Gtk.Label ("More"));
-        light_window_notebook.append_page (new Gtk.Label ("Sharing"), new Gtk.Label ("Sharing"));
-
-        open_lbl.margin_left = 24;
-        open_drop.margin_left = 12;
-        open_drop.append ("audience", "Audience");
-        open_drop.active = 0;
-        grid.margin = 12;
-        grid.margin_top = 24;
-        grid.margin_bottom = 24;
-        entry.text = "Cool Hand Luke";
-        general.column_spacing = 6;
-        general.row_spacing = 6;
-*/
         }
     }
 }
