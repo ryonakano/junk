@@ -293,7 +293,7 @@ namespace Drives
      */
     class DriveDetails : Gtk.EventBox
     {
-        protected string dbus_path;
+        protected ListDriveItem item;
 
         protected Gtk.Notebook view_switcher;
         protected Gtk.Box view_welcome;
@@ -351,9 +351,9 @@ namespace Drives
             this.add (view_switcher);
         }
 
-        public void loadDriveInformation (ListDriveItem item) {
-            dbus_path = item.dbus_path;
-            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", dbus_path);
+        public void loadDriveInformation (ListDriveItem o) {
+            item = o;
+            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
 
             drive_icon.clear ();
             drive_icon.set_from_icon_name (item.icon_name, Gtk.IconSize.DIALOG);
@@ -394,9 +394,9 @@ namespace Drives
             view_switcher.set_current_page (page_drive);
         }
 
-        public void loadPartitionInformation (ListDriveItem item) {
-            dbus_path = item.dbus_path;
-            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", dbus_path);
+        public void loadPartitionInformation (ListDriveItem o) {
+            item = o;
+            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
 
             partition_icon.clear ();
             partition_icon.set_from_icon_name (item.icon_name, Gtk.IconSize.DIALOG);
@@ -1062,10 +1062,9 @@ namespace Drives
         }
 
         private void show_format_window () {
-            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", dbus_path);
+            var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
 
-
-            var light_window = new Granite.Widgets.LightWindow (_("Format")+" ");
+            var light_window = new Granite.Widgets.LightWindow (_("Format")+": "+item.show_label);
             light_window.width_request = 350;
 
             var notebook = new Granite.Widgets.StaticNotebook ();
