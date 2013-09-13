@@ -840,15 +840,12 @@ namespace Drives
             double borderR = unit(153);
             double borderG = unit(153);
             double borderB = unit(153);
-            double shineR = unit(230);
-            double shineG = unit(228);
-            double shineB = unit(227);
             drawBarLeftArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
-                            borderR, borderG, borderB, shineR, shineG, shineB);
+                            borderR, borderG, borderB);
             drawBarRightArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
-                            borderR, borderG, borderB, shineR, shineG, shineB);
+                            borderR, borderG, borderB);
             drawBarBody (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
-                            borderR, borderG, borderB, shineR, shineG, shineB, false);
+                            borderR, borderG, borderB, false);
 
             // Draw disk usage
             if (partition_percentage_used > 0) {
@@ -858,21 +855,21 @@ namespace Drives
                 borderR = unit(68);
                 borderG = unit(138);
                 borderB = unit(186);
-                shineR = unit(114);
-                shineG = unit(188);
-                shineB = unit(238);
                 var cutBody = true;
                 drawBarLeftArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
-                                borderR, borderG, borderB, shineR, shineG, shineB);
+                                borderR, borderG, borderB);
                 if (partition_percentage_used >= 100) {
                     cutBody = false;
                     drawBarRightArc (ctx, radius, x0, x1, y0, y1, y2, backR, backG, backB,
-                                borderR, borderG, borderB, shineR, shineG, shineB);
+                                borderR, borderG, borderB);
                 }
                 int dx1 = x0 + (((x1 - x0) * partition_percentage_used) / 100);
                 drawBarBody (ctx, radius, x0, dx1, y0, y1, y2, backR, backG, backB,
-                                borderR, borderG, borderB, shineR, shineG, shineB, cutBody);
+                                borderR, borderG, borderB, cutBody);
             }
+
+            // Draw shine
+            drawShine (ctx, radius, x0, x1, y0, y1, y2);
 
             return true;
         }
@@ -884,16 +881,12 @@ namespace Drives
         public void drawBarLeftArc (Cairo.Context ctx, int radius,
                                         int x0, int x1, int y0, int y1, int y2,
                                         double backR, double backG, double backB,
-                                        double borderR, double borderG, double borderB,
-                                        double shineR, double shineG, double shineB) {
+                                        double borderR, double borderG, double borderB) {
             ctx.set_source_rgb (backR, backG, backB);
             ctx.arc (x0, y0 + radius, radius, 1.57, 4.71);
             ctx.fill ();
             ctx.set_source_rgb (borderR, borderG, borderB);
             ctx.arc (x0, y0 + radius, radius, 1.57, 4.71);
-            ctx.stroke ();
-            ctx.set_source_rgb (shineR, shineG, shineB); // Shining
-            ctx.arc (x0, y0 + radius, radius-2, 3.95, 4.71);
             ctx.stroke ();
             // Mirror
             var pattern = new Cairo.Pattern.linear (x0, y1, x0, y2);
@@ -909,16 +902,12 @@ namespace Drives
         public void drawBarRightArc (Cairo.Context ctx, int radius,
                                         int x0, int x1, int y0, int y1, int y2,
                                         double backR, double backG, double backB,
-                                        double borderR, double borderG, double borderB,
-                                        double shineR, double shineG, double shineB) {
+                                        double borderR, double borderG, double borderB) {
             ctx.set_source_rgb (backR, backG, backB);
             ctx.arc (x1, y0 + radius, radius, -1.57, 1.57);
             ctx.fill ();
             ctx.set_source_rgb (borderR, borderG, borderB);
             ctx.arc (x1, y0 + radius, radius, -1.57, 1.57);
-            ctx.stroke ();
-            ctx.set_source_rgb (shineR, shineG, shineB); // Shining
-            ctx.arc (x1, y0 + radius, radius-2, 4.71, 5.49);
             ctx.stroke ();
             // Mirror
             var pattern = new Cairo.Pattern.linear (x0, y1, x0, y2);
@@ -929,16 +918,12 @@ namespace Drives
             ctx.fill ();
             ctx.arc (x1, y1 + radius + 1, radius, -1.57, 1.57);
             ctx.stroke ();
-            ctx.set_source_rgb (shineR, shineG, shineB); // Shining
-            ctx.arc (x1 + 1, y1 + radius + 1, radius, -1.57, 1.57);
-            ctx.stroke ();
         }
 
         public void drawBarBody (Cairo.Context ctx, int radius,
                                     int x0, int x1, int y0, int y1, int y2,
                                     double backR, double backG, double backB,
-                                    double borderR, double borderG, double borderB,
-                                    double shineR, double shineG, double shineB, bool cut) {
+                                    double borderR, double borderG, double borderB, bool cut) {
             ctx.set_source_rgb (backR, backG, backB);
             ctx.move_to (x0, y0);
             ctx.line_to (x1, y0);
@@ -952,11 +937,9 @@ namespace Drives
             ctx.move_to (x1, y1);
             ctx.line_to (x0, y1);
             ctx.stroke ();
-            ctx.set_source_rgb (shineR, shineG, shineB); // Shining
-            ctx.move_to (x0, y0+2);
-            ctx.line_to (x1, y0+2);
-            ctx.stroke ();
+            // Shine cut
             if (cut) {
+                ctx.set_source_rgba (1, 1, 1, 0.5);
                 ctx.move_to (x1-1, y0+2);
                 ctx.line_to (x1-1, y1);
                 ctx.stroke ();
@@ -972,6 +955,21 @@ namespace Drives
             ctx.line_to (x0, y2);
             ctx.line_to (x0, y1+1);
             ctx.fill ();
+        }
+
+        private void drawShine (Cairo.Context ctx, int radius,
+                                    int x0, int x1, int y0, int y1, int y2) {
+            // Left Arc
+            ctx.set_source_rgba (1, 1, 1, 0.5);
+            ctx.arc (x0, y0 + radius, radius-2, 3.95, 4.71);
+            ctx.stroke ();
+            // Right Arc
+            ctx.arc (x1, y0 + radius, radius-2, 4.71, 5.49);
+            ctx.stroke ();
+            // Bar
+            ctx.move_to (x0, y0+2);
+            ctx.line_to (x1, y0+2);
+            ctx.stroke ();
         }
 
         private void show_format_window () {
