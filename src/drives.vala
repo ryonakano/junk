@@ -361,30 +361,33 @@ namespace Drives
                 drive_icon = new Gtk.Image.from_icon_name ("drive-harddisk", Gtk.IconSize.DIALOG);
             }
 
-            drive_name_label.label = item.show_label;
-            drive_serial_label.label = device.DriveSerial;
+            drive_name_label.label = Markup.printf_escaped ("<span weight='medium' size='13500'>%s</span>", item.show_label);
+            drive_serial_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", device.DriveSerial);
+            var smart_label = "";
             if (device.DriveAtaSmartIsAvailable) {
-                drive_smart_label.label = _("Disk is healthy");
-
+                smart_label = _("Disk is healthy");
                 var smart = device.DriveAtaSmartStatus;
-                if (smart == "AD_ATTRIBUTES_IN_THE_PAST") drive_smart_label.label = _("Disk exceeded its threshold");
-                else if (smart == "BAD_SECTOR") drive_smart_label.label = _("At least one bad sector");
-                else if (smart == "BAD_ATTRIBUTE_NOW") drive_smart_label.label = _("Disk exceeding its threshold");
-                else if (smart == "BAD_SECTOR_MANY") drive_smart_label.label = _("Many bad sectors");
-                else if (smart == "BAD_STATUS") drive_smart_label.label = _("Self assessment negative");
+                if (smart == "AD_ATTRIBUTES_IN_THE_PAST")    smart_label = _("Disk exceeded its threshold");
+                else if (smart == "BAD_SECTOR")             smart_label = _("At least one bad sector");
+                else if (smart == "BAD_ATTRIBUTE_NOW")      smart_label = _("Disk exceeding its threshold");
+                else if (smart == "BAD_SECTOR_MANY")        smart_label = _("Many bad sectors");
+                else if (smart == "BAD_STATUS")             smart_label = _("Self assessment negative");
             } else {
-                drive_smart_label.label = _("Not Supported");
+                smart_label = _("Not Supported");
             }
-            drive_device_label.label = device.DeviceFile;
+            drive_smart_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", smart_label);
+            drive_device_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", device.DeviceFile);
 
-            drive_partitioning_label.label = _("Unknown");
+            drive_partitioning_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Unknown"));
+            var partitioning_label = "";
             var partitioning = device.PartitionTableScheme;
-            if (partitioning == "none") drive_partitioning_label.label = _("None");
-            else if (partitioning == "mbr") drive_partitioning_label.label = _("Master Boot Record");
-            else if (partitioning == "gpt") drive_partitioning_label.label = _("GUID Partition Table");
-            else if (partitioning == "apm") drive_partitioning_label.label = _("Apple Partition Map");
+            if (partitioning == "none") partitioning_label = _("None");
+            else if (partitioning == "mbr") partitioning_label = _("Master Boot Record");
+            else if (partitioning == "gpt") partitioning_label = _("GUID Partition Table");
+            else if (partitioning == "apm") partitioning_label = _("Apple Partition Map");
+            drive_partitioning_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", partitioning_label);
 
-            drive_capacity_label.label = bytesToHuman ((long) device.DeviceSize);
+            drive_capacity_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", bytesToHuman ((long) device.DeviceSize));
 
             drive_format_button.visible = true;
             if (item.is_file_system) {
@@ -404,8 +407,8 @@ namespace Drives
                 partition_icon = new Gtk.Image.from_icon_name ("drive-harddisk", Gtk.IconSize.DIALOG);
             }
 
-            partition_name_label.label = device.DriveModel;
-            partition_kind_label.label = _("Partition")+", "+item.show_label;
+            partition_name_label.label = Markup.printf_escaped ("<span weight='medium' size='13500'>%s</span>", device.DriveModel);
+            partition_kind_label.label = Markup.printf_escaped ("<span weight='medium' size='11000'>%s</span>", _("Partition")+", "+item.show_label);
 
             var partition_type = device.IdType;
             var partition_usage = device.IdUsage;
@@ -417,11 +420,11 @@ namespace Drives
                 partition_mount = _("Not mounted");
             }
 
-            partition_type_label.label = partition_type;
-            partition_usage_label.label = partition_usage;
-            partition_device_label.label = device.DeviceFile;
-            partition_mount_label.label = partition_mount;
-            partition_capacity_label.label = bytesToHuman ((long) device.PartitionSize);
+            partition_type_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", partition_type);
+            partition_usage_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", partition_usage);
+            partition_device_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", device.DeviceFile);
+            partition_mount_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", partition_mount);
+            partition_capacity_label.label = Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", bytesToHuman ((long) device.PartitionSize));
 
             if (device.DeviceIsMounted) {
                 partition_mount_button.visible = false;
@@ -461,7 +464,7 @@ namespace Drives
                     // Mida d'un directori http://gezeiten.org/post/2009/04/Writing-Your-Own-GIO-Jobs
                     // Més fàcil : du -s /home/albert/
                 }
-                partition_resume_label.label = bytesToHuman(partition_disk_free)+_(" available");
+                partition_resume_label.label = Markup.printf_escaped ("<span weight='medium' size='11000'>%s</span>", bytesToHuman(partition_disk_free)+_(" available"));
                 partition_percentage_used = (int) (100 - ((partition_disk_free * 100) / partition_disk_space));
                 details_usage_graphic_contents.queue_draw ();
             }
@@ -535,353 +538,278 @@ namespace Drives
 
         public void constructViewDrive () {
             view_drive = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            view_drive.homogeneous = false;
+            view_drive.hexpand = true;
 
-            var content = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            // Title
+            var drive_title = new Gtk.Grid ();
+            drive_title.margin_top = 25;
+            drive_title.hexpand = true;
+            drive_title.column_homogeneous = true;
+            drive_title.column_spacing = 5;
+            drive_title.row_spacing = 5;
+            view_drive.pack_start (drive_title, false, true, 0);
 
-            // Top spacer
-            var top_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            top_box.valign = Gtk.Align.CENTER;
-            content.pack_start (top_box, false, false, 10);
+            // Title image
+            drive_icon = new Gtk.Image.from_icon_name ("drive-harddisk", Gtk.IconSize.DIALOG);
+            drive_icon.margin_right =10;
+            drive_icon.halign = Gtk.Align.END;
+            drive_icon.valign = Gtk.Align.CENTER;
+            if (drive_icon != null) {
+                drive_icon.set_pixel_size (64);
+                drive_title.attach (drive_icon,0,0,1,1);
+            }
 
             // Title labels
-            drive_name_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11700'>%s</span>", _("Drive")));
+            drive_name_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='13500'>%s</span>", _("Drive")));
             Granite.Widgets.Utils.apply_text_style_to_label (Granite.TextStyle.H3, drive_name_label);
             drive_name_label.use_markup = true;
             drive_name_label.halign = Gtk.Align.START;
             drive_name_label.valign = Gtk.Align.CENTER;
 
-            var drive_kind_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11700'>%s</span>", _("Drive")));
+            var drive_kind_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11000'>%s</span>", _("Drive")));
             drive_kind_label.use_markup = true;
             drive_kind_label.halign = Gtk.Align.START;
             drive_kind_label.valign = Gtk.Align.CENTER;
             drive_kind_label.sensitive = false;
-
-            // Title
-            var title_contents = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            title_contents.homogeneous = true;
-            title_contents.halign = Gtk.Align.CENTER;
-            title_contents.valign = Gtk.Align.CENTER;
-
-            // Title image
-            drive_icon = new Gtk.Image.from_icon_name ("drive-harddisk", Gtk.IconSize.DIALOG);
-            if (drive_icon != null) {
-                drive_icon.set_pixel_size (64);
-                title_contents.pack_start (drive_icon, false, true, 0);
-            }
 
             // Title labels box
             var title_list = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             title_list.valign = Gtk.Align.CENTER;
             title_list.pack_start (drive_name_label, false, true, 0);
             title_list.pack_start (drive_kind_label, false, false, 0);
-            title_contents.pack_start (title_list, false, false, 0);
-            content.pack_start (title_contents, false, false, 0);
+            drive_title.attach (title_list,1,0,1,1);
 
-            // Spacer
-            content.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 15);
+            // Details
+            var drive_details = new Gtk.Grid ();
+            drive_details.margin_top = 25;
+            drive_details.hexpand = true;
+            drive_details.column_homogeneous = true;
+            drive_details.column_spacing = 5;
+            drive_details.row_spacing = 5;
+            view_drive.pack_start (drive_details, false, true, 0);
 
             // Details serial number
-            var drive_serial_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Serial number")));
+            var drive_serial_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Serial number")));
             drive_serial_label_title.use_markup = true;
             drive_serial_label_title.halign = Gtk.Align.END;
             drive_serial_label_title.valign = Gtk.Align.CENTER;
             drive_serial_label_title.sensitive = false;
+            drive_details.attach (drive_serial_label_title,0,0,1,1);
 
-            drive_serial_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Serial number")));
+            drive_serial_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Serial number")));
             drive_serial_label.use_markup = true;
             drive_serial_label.halign = Gtk.Align.START;
             drive_serial_label.valign = Gtk.Align.CENTER;
-
-            var drive_serial = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            drive_serial.homogeneous = true;
-            drive_serial.halign = Gtk.Align.CENTER;
-            drive_serial.valign = Gtk.Align.CENTER;
-            drive_serial.pack_start (drive_serial_label_title, false, true, 5);
-            drive_serial.pack_start (drive_serial_label, false, true, 0);
-            content.pack_start (drive_serial, false, false, 2);
+            drive_details.attach (drive_serial_label,1,0,1,1);
 
             // Details SMART
-            var drive_smart_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("SMART Status")));
+            var drive_smart_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("SMART Status")));
             drive_smart_label_title.use_markup = true;
             drive_smart_label_title.halign = Gtk.Align.END;
             drive_smart_label_title.valign = Gtk.Align.CENTER;
             drive_smart_label_title.sensitive = false;
+            drive_details.attach (drive_smart_label_title,0,1,1,1);
 
-            drive_smart_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("SMART Status")));
+            drive_smart_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("SMART Status")));
             drive_smart_label.use_markup = true;
             drive_smart_label.halign = Gtk.Align.START;
             drive_smart_label.valign = Gtk.Align.CENTER;
-
-            var drive_smart = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            drive_smart.homogeneous = true;
-            drive_smart.halign = Gtk.Align.CENTER;
-            drive_smart.valign = Gtk.Align.CENTER;
-            drive_smart.pack_start (drive_smart_label_title, false, true, 5);
-            drive_smart.pack_start (drive_smart_label, false, true, 0);
-            content.pack_start (drive_smart, false, false, 2);
+            drive_details.attach (drive_smart_label,1,1,1,1);
 
             // Details device
-            var drive_device_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Device")));
+            var drive_device_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Device")));
             drive_device_label_title.use_markup = true;
             drive_device_label_title.halign = Gtk.Align.END;
             drive_device_label_title.valign = Gtk.Align.CENTER;
             drive_device_label_title.sensitive = false;
+            drive_details.attach (drive_device_label_title,0,2,1,1);
 
-            drive_device_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Device")));
+            drive_device_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Device")));
             drive_device_label.use_markup = true;
             drive_device_label.halign = Gtk.Align.START;
             drive_device_label.valign = Gtk.Align.CENTER;
-
-            var drive_device = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            drive_device.homogeneous = true;
-            drive_device.halign = Gtk.Align.CENTER;
-            drive_device.valign = Gtk.Align.CENTER;
-            drive_device.pack_start (drive_device_label_title, false, true, 5);
-            drive_device.pack_start (drive_device_label, false, true, 0);
-            content.pack_start (drive_device, false, false, 2);
+            drive_details.attach (drive_device_label,1,2,1,1);
 
             // Details partitioning
-            var drive_partitioning_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Partitioning")));
+            var drive_partitioning_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Partitioning")));
             drive_partitioning_label_title.use_markup = true;
             drive_partitioning_label_title.halign = Gtk.Align.END;
             drive_partitioning_label_title.valign = Gtk.Align.CENTER;
             drive_partitioning_label_title.sensitive = false;
+            drive_details.attach (drive_partitioning_label_title,0,3,1,1);
 
-            drive_partitioning_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Partitioning")));
+            drive_partitioning_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Partitioning")));
             drive_partitioning_label.use_markup = true;
             drive_partitioning_label.halign = Gtk.Align.START;
             drive_partitioning_label.valign = Gtk.Align.CENTER;
-
-            var drive_partitioning = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            drive_partitioning.homogeneous = true;
-            drive_partitioning.halign = Gtk.Align.CENTER;
-            drive_partitioning.valign = Gtk.Align.CENTER;
-            drive_partitioning.pack_start (drive_partitioning_label_title, false, true, 5);
-            drive_partitioning.pack_start (drive_partitioning_label, false, true, 0);
-            content.pack_start (drive_partitioning, false, false, 2);
+            drive_details.attach (drive_partitioning_label,1,3,1,1);
 
             // Details capacity
-            var drive_capacity_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Capacity")));
+            var drive_capacity_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Capacity")));
             drive_capacity_label_title.use_markup = true;
             drive_capacity_label_title.halign = Gtk.Align.END;
             drive_capacity_label_title.valign = Gtk.Align.CENTER;
             drive_capacity_label_title.sensitive = false;
+            drive_details.attach (drive_capacity_label_title,0,4,1,1);
 
-            drive_capacity_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Capacity")));
+            drive_capacity_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Capacity")));
             drive_capacity_label.use_markup = true;
             drive_capacity_label.halign = Gtk.Align.START;
             drive_capacity_label.valign = Gtk.Align.CENTER;
+            drive_details.attach (drive_capacity_label,1,4,1,1);
 
-            var drive_capacity = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            drive_capacity.homogeneous = true;
-            drive_capacity.halign = Gtk.Align.CENTER;
-            drive_capacity.valign = Gtk.Align.CENTER;
-            drive_capacity.pack_start (drive_capacity_label_title, false, true, 5);
-            drive_capacity.pack_start (drive_capacity_label, false, true, 0);
-            content.pack_start (drive_capacity, false, false, 2);
-
-            // Spacer
-            content.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 15);
-
-            // Tools buttons
+            // Bottom buttons
             var bottom_buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             bottom_buttons_box.halign = Gtk.Align.CENTER;
             bottom_buttons_box.valign = Gtk.Align.CENTER;
             drive_format_button = new Gtk.Button.with_label (" "+_("Format Drive")+" ");
             bottom_buttons_box.pack_start (drive_format_button, false, true, 5);
             drive_format_button.clicked.connect (show_format_window);
-            content.pack_end (bottom_buttons_box, false, false, 10);
-
-            // Options wrapper
-            var options = new Gtk.Box (Gtk.Orientation.VERTICAL, 8);
-            var options_wrapper = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-
-            options_wrapper.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), true, true, 0); // left padding
-            options_wrapper.pack_start (options, false, false, 0); // actual options
-            options_wrapper.pack_end (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), true, true, 0); // right padding
-
-            content.pack_start (options_wrapper, false, false, 20);
-
-            // Bottom spacer
-            content.pack_end (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), true, true, 0);
-
-            view_drive.pack_start (content, true, true, 0);
+            view_drive.pack_end (bottom_buttons_box, false, false, 10);
         }
 
         public void constructViewPartition () {
             view_partition = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            view_partition.homogeneous = false;
+            view_partition.hexpand = true;
 
-            var content = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            // Title
+            var partition_title = new Gtk.Grid ();
+            partition_title.margin_top = 25;
+            partition_title.hexpand = true;
+            partition_title.column_homogeneous = true;
+            partition_title.column_spacing = 5;
+            partition_title.row_spacing = 5;
+            view_partition.pack_start (partition_title, false, true, 0);
 
-            // Top spacer
-            var top_box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
-            top_box.valign = Gtk.Align.CENTER;
-            content.pack_start (top_box, false, false, 10);
+            // Title image
+            partition_icon = new Gtk.Image.from_icon_name ("drive-harddisk", Gtk.IconSize.DIALOG);
+            partition_icon.margin_right =10;
+            partition_icon.halign = Gtk.Align.END;
+            partition_icon.valign = Gtk.Align.CENTER;
+            if (partition_icon != null) {
+                partition_icon.set_pixel_size (64);
+                partition_title.attach (partition_icon,0,0,1,1);
+            }
 
             // Title labels
-            partition_name_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11700'>%s</span>", _("Partition")));
+            partition_name_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='13500'>%s</span>", _("Type")));
             Granite.Widgets.Utils.apply_text_style_to_label (Granite.TextStyle.H3, partition_name_label);
             partition_name_label.use_markup = true;
             partition_name_label.halign = Gtk.Align.START;
             partition_name_label.valign = Gtk.Align.CENTER;
 
-            partition_kind_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11700'>%s</span>", _("Partition")));
+            partition_kind_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11000'>%s</span>", _("Type")));
             partition_kind_label.use_markup = true;
             partition_kind_label.halign = Gtk.Align.START;
             partition_kind_label.valign = Gtk.Align.CENTER;
             partition_kind_label.sensitive = false;
-
-            // Title
-            var title_contents = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            title_contents.homogeneous = true;
-            title_contents.halign = Gtk.Align.CENTER;
-            title_contents.valign = Gtk.Align.CENTER;
-
-            // Title image
-            partition_icon = new Gtk.Image.from_icon_name ("drive-harddisk", Gtk.IconSize.DIALOG);
-            if (partition_icon != null) {
-                partition_icon.set_pixel_size (64);
-                title_contents.pack_start (partition_icon, false, true, 0);
-            }
 
             // Title labels box
             var title_list = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
             title_list.valign = Gtk.Align.CENTER;
             title_list.pack_start (partition_name_label, false, true, 0);
             title_list.pack_start (partition_kind_label, false, false, 0);
-            title_contents.pack_start (title_list, false, false, 0);
-            content.pack_start (title_contents, false, false, 0);
+            partition_title.attach (title_list,1,0,1,1);
 
-            // Spacer
-            content.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 15);
+            // Details
+            var partition_details = new Gtk.Grid ();
+            partition_details.margin_top = 25;
+            partition_details.hexpand = true;
+            partition_details.column_homogeneous = true;
+            partition_details.column_spacing = 5;
+            partition_details.row_spacing = 5;
+            view_partition.pack_start (partition_details, false, true, 0);
 
             // Details type
-            var partition_type_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Type")));
+            var partition_type_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Type")));
             partition_type_label_title.use_markup = true;
             partition_type_label_title.halign = Gtk.Align.END;
             partition_type_label_title.valign = Gtk.Align.CENTER;
             partition_type_label_title.sensitive = false;
+            partition_details.attach (partition_type_label_title,0,0,1,1);
 
-            partition_type_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Type")));
+            partition_type_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Type")));
             partition_type_label.use_markup = true;
             partition_type_label.halign = Gtk.Align.START;
             partition_type_label.valign = Gtk.Align.CENTER;
-
-            var partition_type = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            partition_type.homogeneous = true;
-            partition_type.halign = Gtk.Align.CENTER;
-            partition_type.valign = Gtk.Align.CENTER;
-            partition_type.pack_start (partition_type_label_title, false, true, 5);
-            partition_type.pack_start (partition_type_label, false, true, 0);
-            content.pack_start (partition_type, false, false, 2);
+            partition_details.attach (partition_type_label,1,0,1,1);
 
             // Details usage
-            var partition_usage_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Usage")));
+            var partition_usage_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Usage")));
             partition_usage_label_title.use_markup = true;
             partition_usage_label_title.halign = Gtk.Align.END;
             partition_usage_label_title.valign = Gtk.Align.CENTER;
             partition_usage_label_title.sensitive = false;
+            partition_details.attach (partition_usage_label_title,0,1,1,1);
 
-            partition_usage_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Usage")));
+            partition_usage_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Usage")));
             partition_usage_label.use_markup = true;
             partition_usage_label.halign = Gtk.Align.START;
             partition_usage_label.valign = Gtk.Align.CENTER;
-
-            var partition_usage = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            partition_usage.homogeneous = true;
-            partition_usage.halign = Gtk.Align.CENTER;
-            partition_usage.valign = Gtk.Align.CENTER;
-            partition_usage.pack_start (partition_usage_label_title, false, true, 5);
-            partition_usage.pack_start (partition_usage_label, false, true, 0);
-            content.pack_start (partition_usage, false, false, 2);
+            partition_details.attach (partition_usage_label,1,1,1,1);
 
             // Details device
-            var partition_device_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Device")));
+            var partition_device_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Device")));
             partition_device_label_title.use_markup = true;
             partition_device_label_title.halign = Gtk.Align.END;
             partition_device_label_title.valign = Gtk.Align.CENTER;
             partition_device_label_title.sensitive = false;
+            partition_details.attach (partition_device_label_title,0,2,1,1);
 
-            partition_device_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Device")));
+            partition_device_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Device")));
             partition_device_label.use_markup = true;
             partition_device_label.halign = Gtk.Align.START;
             partition_device_label.valign = Gtk.Align.CENTER;
-
-            var partition_device = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            partition_device.homogeneous = true;
-            partition_device.halign = Gtk.Align.CENTER;
-            partition_device.valign = Gtk.Align.CENTER;
-            partition_device.pack_start (partition_device_label_title, false, true, 5);
-            partition_device.pack_start (partition_device_label, false, true, 0);
-            content.pack_start (partition_device, false, false, 2);
+            partition_details.attach (partition_device_label,1,2,1,1);
 
             // Details mount
-            var partition_mount_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Mount point")));
+            var partition_mount_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Mount")));
             partition_mount_label_title.use_markup = true;
             partition_mount_label_title.halign = Gtk.Align.END;
             partition_mount_label_title.valign = Gtk.Align.CENTER;
             partition_mount_label_title.sensitive = false;
+            partition_details.attach (partition_mount_label_title,0,3,1,1);
 
-            partition_mount_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Mount point")));
+            partition_mount_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Mount")));
             partition_mount_label.use_markup = true;
             partition_mount_label.halign = Gtk.Align.START;
             partition_mount_label.valign = Gtk.Align.CENTER;
-
-            var partition_mount = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            partition_mount.homogeneous = true;
-            partition_mount.halign = Gtk.Align.CENTER;
-            partition_mount.valign = Gtk.Align.CENTER;
-            partition_mount.pack_start (partition_mount_label_title, false, true, 5);
-            partition_mount.pack_start (partition_mount_label, false, true, 0);
-            content.pack_start (partition_mount, false, false, 2);
+            partition_details.attach (partition_mount_label,1,3,1,1);
 
             // Details capacity
-            var partition_capacity_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s:</span>", _("Capacity")));
+            var partition_capacity_label_title = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s:</span>", _("Capacity")));
             partition_capacity_label_title.use_markup = true;
             partition_capacity_label_title.halign = Gtk.Align.END;
             partition_capacity_label_title.valign = Gtk.Align.CENTER;
             partition_capacity_label_title.sensitive = false;
+            partition_details.attach (partition_capacity_label_title,0,4,1,1);
 
-            partition_capacity_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'>%s</span>", _("Capacity")));
+            partition_capacity_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='10000'>%s</span>", _("Capacity")));
             partition_capacity_label.use_markup = true;
             partition_capacity_label.halign = Gtk.Align.START;
             partition_capacity_label.valign = Gtk.Align.CENTER;
-
-            var partition_capacity = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            partition_capacity.homogeneous = true;
-            partition_capacity.halign = Gtk.Align.CENTER;
-            partition_capacity.valign = Gtk.Align.CENTER;
-            partition_capacity.pack_start (partition_capacity_label_title, false, true, 5);
-            partition_capacity.pack_start (partition_capacity_label, false, true, 0);
-            content.pack_start (partition_capacity, false, false, 2);
-
-            // Spacer
-            content.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 20);
+            partition_details.attach (partition_capacity_label,1,4,1,1);
 
             // Resume
-            partition_resume_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='9700'> %s</span>", _("available")));
+            partition_resume_label = new Gtk.Label (Markup.printf_escaped ("<span weight='medium' size='11000'> %s</span>", _("available")));
+            Granite.Widgets.Utils.apply_text_style_to_label (Granite.TextStyle.H3, partition_resume_label);
             partition_resume_label.use_markup = true;
             partition_resume_label.halign = Gtk.Align.START;
             partition_resume_label.valign = Gtk.Align.CENTER;
 
             partition_resume_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+            partition_resume_box.margin_top = 30;
             partition_resume_box.halign = Gtk.Align.CENTER;
             partition_resume_box.valign = Gtk.Align.CENTER;
             partition_resume_box.pack_start (partition_resume_label, false, true, 5);
-            content.pack_start (partition_resume_box, false, false, 2);
+            view_partition.pack_start (partition_resume_box, false, false, 2);
 
-            // Deatils usage 'graphic' box
             details_usage_graphic_contents = new Gtk.DrawingArea ();
             details_usage_graphic_contents.set_size_request (250,30);
             details_usage_graphic_contents.draw.connect (draw_usage_bar);
-            content.pack_start (details_usage_graphic_contents, false, false, 2);
+            view_partition.pack_start (details_usage_graphic_contents, false, false, 2);
 
-            // Spacer
-            content.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), false, false, 15);
-
-            // Tools buttons
+            // Bottom buttons
             var bottom_buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             bottom_buttons_box.halign = Gtk.Align.CENTER;
             bottom_buttons_box.valign = Gtk.Align.CENTER;
@@ -889,22 +817,7 @@ namespace Drives
             bottom_buttons_box.pack_start (partition_files_button, false, true, 5);
             partition_mount_button = new Gtk.Button.with_label (" "+_("Mount")+" ");
             bottom_buttons_box.pack_start (partition_mount_button, false, true, 5);
-            content.pack_end (bottom_buttons_box, false, false, 10);
-
-            // Options wrapper
-            var options = new Gtk.Box (Gtk.Orientation.VERTICAL, 8);
-            var options_wrapper = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-
-            options_wrapper.pack_start (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), true, true, 0); // left padding
-            options_wrapper.pack_start (options, false, false, 0); // actual options
-            options_wrapper.pack_end (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), true, true, 0); // right padding
-
-            content.pack_start (options_wrapper, false, false, 20);
-
-            // Bottom spacer
-            content.pack_end (new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0), true, true, 10);
-
-            view_partition.pack_start (content, true, true, 0);
+            view_partition.pack_end (bottom_buttons_box, false, false, 10);
         }
 
         private bool draw_usage_bar (Gtk.Widget da, Cairo.Context ctx) {
@@ -1062,7 +975,12 @@ namespace Drives
         }
 
         private void show_format_window () {
+            // Get&Save drive data before another drive is selected
             var device = Bus.get_proxy_sync<Device_if> (BusType.SYSTEM, "org.freedesktop.UDisks", item.dbus_path);
+
+            // TODO si treuen la unitat matar la finestra
+            // TODO si modifiquen la unitat agafar noves dades
+            // TODO Si seleccionen una altre unitat conservar les dades
 
             var light_window = new Granite.Widgets.LightWindow (_("Format")+": "+item.show_label);
             light_window.width_request = 350;
@@ -1130,7 +1048,6 @@ namespace Drives
             var notebook = new Granite.Widgets.StaticNotebook ();
             notebook.margin = 12;
             notebook.append_page (format_box, new Gtk.Label (_("Format")));
-            notebook.append_page (new Gtk.Label (_("TODO: Allow basic partitioning")), new Gtk.Label (_("Partitions")));
             notebook.append_page (new Gtk.Label (_("TODO: dd images to drive")), new Gtk.Label (_("Restore")));
 
             light_window.add (notebook);
