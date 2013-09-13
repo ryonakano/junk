@@ -1066,11 +1066,28 @@ namespace Drives
 
             var light_window = new Granite.Widgets.LightWindow (_("Format")+": "+item.show_label);
             light_window.width_request = 350;
+            light_window.window_position = Gtk.WindowPosition.CENTER;
+/*
+            var grid = new Gtk.Box ();
+            
+
+            var bottom_buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+            bottom_buttons_box.halign = Gtk.Align.CENTER;
+            bottom_buttons_box.valign = Gtk.Align.CENTER;
+            partition_files_button = new Gtk.Button.with_label (" "+_("View Files")+" ");
+            bottom_buttons_box.pack_start (partition_files_button, false, true, 5);
+            partition_mount_button = new Gtk.Button.with_label (" "+_("Mount")+" ");
+            bottom_buttons_box.pack_start (partition_mount_button, false, true, 5);
+            content.pack_end (bottom_buttons_box, false, false, 10);
+*/
+            var format = new Gtk.Grid ();
 
             var notebook = new Granite.Widgets.StaticNotebook ();
+            notebook.margin = 12;
             notebook.append_page (new Gtk.Label (_("TODO: One click formatting")), new Gtk.Label (_("Format")));
             notebook.append_page (new Gtk.Label (_("TODO: Allow basic partitioning")), new Gtk.Label (_("Partitions")));
             notebook.append_page (new Gtk.Label (_("TODO: dd images to drive")), new Gtk.Label (_("Restore")));
+
 
             light_window.add (notebook);
             light_window.show_all ();
