@@ -10,4 +10,4 @@
 cd `dirname $0`
 mkdir -p ./log
 touch ./log/daizu.log
-echo -e "=================================" >> ./log/daizu.log && date | tr '\n' ' ' >> ./log/daizu.log && echo -e "Started Daizu Daemon." >> ./log/daizu.log
+echo -e "=================================" >> ./log/daizu.log && date | tr '\n' ' ' >> ./log/daizu.log && echo -e "Daizu was started with cron." >> ./log/daizu.log
