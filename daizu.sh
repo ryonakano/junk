@@ -12,7 +12,7 @@ mkdir -p ./log
 touch ./log/daizu.log
 echo -e "=================================" >> ./log/daizu.log && date | tr '\n' ' ' >> ./log/daizu.log && echo -e "Started Daizu." >> ./log/daizu.log
 #
-echo -e "\n=================================\nDaizu v0.01\n"
+echo -e "\n=================================\nDaizu v1.0.0\n"
 echo -e "Choose DDNS service you want to inform.\n 1. MyDNS.JP\n 2. ieServer\n"
 while true; do
 	read -p "Choose 1-2: " SERVICE
