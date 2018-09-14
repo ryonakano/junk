@@ -1,14 +1,10 @@
 # Daizu
 
-IP address informing tool for some Japanese common DDNS services
-
-## Description
-
-`Daizu` informs IP address of your server to DDNS services which are used to build home Web servers and mail servers.
+Daizu is a tool that lets you inform IP address of your server to ieServer/MyDNS.JP.
 
 ## Features
 
-* Works with 2 Japanese common DDNS services: [MyDNS.JP](https://www.mydns.jp/) & [ieServer](http://www.ieserver.net/)
+* Works with 2 Japanese common DDNS services: [ieServer](http://www.ieserver.net/) & [MyDNS.JP](https://www.mydns.jp/)
 * Works without root privilege
 * Works confirmed with Ubuntu 18.04 LTS, CentOS 7, Debian 9
 
