@@ -1,5 +1,7 @@
 # Daizu
 
+[![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE.txt)
+
 Daizu is a tool that lets you inform IP address of your server to ieServer/MyDNS.JP.
 
 ## Features
@@ -68,10 +70,6 @@ Next execute `crontab` and delete the line that you added to inform regularly:
 ## Contributing
 
 Pull Requests, Issues are welcome.
-
-### License
-
-[MIT](LICENSE.txt)
 
 ## References
 
