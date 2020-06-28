@@ -1,10 +1,12 @@
 public class AnimationGifTest : Gtk.Application {
     private Gtk.ApplicationWindow window;
+    public string file_path { get; construct; }
 
-    public AnimationGifTest () {
+    public AnimationGifTest (string path) {
         Object (
             application_id: "com.github.ryonakano.animation-gif-test",
-            flags: ApplicationFlags.FLAGS_NONE
+            flags: ApplicationFlags.HANDLES_OPEN,
+            file_path: path
         );
     }
 
@@ -17,7 +19,7 @@ public class AnimationGifTest : Gtk.Application {
         Gtk.Image image = null;
 
         try {
-            var gif = new Gdk.PixbufAnimation.from_file ("test.gif");
+            var gif = new Gdk.PixbufAnimation.from_file (file_path);
             image = new Gtk.Image.from_animation (gif);
         } catch (Error e) {
             warning (e.message);
@@ -30,6 +32,10 @@ public class AnimationGifTest : Gtk.Application {
     }
 
     public static int main (string[] args) {
-        return new AnimationGifTest ().run ();
+        if (args.length != 2) {
+            return -1;
+        }
+
+        return new AnimationGifTest (args[1]).run ();
     }
 }
