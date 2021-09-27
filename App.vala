@@ -99,7 +99,7 @@ public class ActionButton : Gtk.ToggleButton {
         //  drag_drop.connect ((ctx, x, y, t) => {
         //      icon_name = "window-close-symbolic";
         //      return true;
-        });
+        //  });
         //  drag_data_get.connect ((ctx, data, info, t) => {
         //      data.set_text (icon_name, -1);
         //  });
