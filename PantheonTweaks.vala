@@ -37,8 +37,10 @@ public class PantheonTweaks.App : Gtk.Application {
         }
 
         window = new Gtk.ApplicationWindow (this) {
-            title = "App",
-            border_width = 12
+            title = "The example in another \"Pantheon Tweaks\"",
+            border_width = 12,
+            width_request = 350,
+            height_request = 100
         };
 
         build_ui ();
@@ -49,7 +51,8 @@ public class PantheonTweaks.App : Gtk.Application {
 
     private void build_ui () {
         var top = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
-            halign = Gtk.Align.CENTER
+            halign = Gtk.Align.CENTER,
+            valign = Gtk.Align.CENTER
         };
 
         sep1 = new Gtk.Separator (Gtk.Orientation.VERTICAL) {
