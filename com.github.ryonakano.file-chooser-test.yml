@@ -1,0 +1,16 @@
+app-id: com.github.ryonakano.file-chooser-test
+runtime: io.elementary.Platform
+runtime-version: '6'
+sdk: io.elementary.Sdk
+command: com.github.ryonakano.file-chooser-test
+finish-args:
+  - '--share=ipc'
+  - '--socket=wayland'
+  - '--socket=fallback-x11'
+  - '--filesystem=xdg-documents'
+modules:
+  - name: file-chooser-test
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .
