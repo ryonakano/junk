@@ -1,3 +1,6 @@
-# Junk
+# HeaderLabelTest
 
-Small projects that are not for product use
+Compile and run:
+
+    make
+    ./com.github.ryonakano.headerlabel-test
