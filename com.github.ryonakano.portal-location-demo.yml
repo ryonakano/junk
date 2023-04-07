@@ -6,10 +6,7 @@ command: com.github.ryonakano.portal-location-demo
 finish-args:
   - '--share=ipc'
   - '--share=network'
-  - '--socket=wayland'
-  - '--socket=fallback-x11'
   - '--device=dri'
-  - '--system-talk-name=org.freedesktop.GeoClue2'
 modules:
   - name: libportal
     buildsystem: meson
