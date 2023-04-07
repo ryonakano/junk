@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Portal Location Demo
+GenericName=Demo App
+Comment=Demonstrate libportal location module
+Categories=GTK;Utility;
+Exec=com.github.ryonakano.portal-location-demo
+Icon=com.github.ryonakano.portal-location-demo
+Type=Application
+Terminal=true

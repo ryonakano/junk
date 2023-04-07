@@ -1,0 +1,28 @@
+app-id: com.github.ryonakano.portal-location-demo
+runtime: io.elementary.Platform
+runtime-version: '7.2'
+sdk: io.elementary.Sdk
+command: com.github.ryonakano.portal-location-demo
+finish-args:
+  - '--share=ipc'
+  - '--share=network'
+  - '--socket=wayland'
+  - '--socket=fallback-x11'
+  - '--device=dri'
+  - '--system-talk-name=org.freedesktop.GeoClue2'
+modules:
+  - name: libportal
+    buildsystem: meson
+    config-opts:
+      - '-Dbackends=gtk4'
+      - '-Ddocs=false'
+      - '-Dtests=false'
+    sources:
+      - type: archive
+        url: https://github.com/flatpak/libportal/archive/refs/tags/0.6.tar.gz
+        sha256: 8ad326c4f53b7433645dc86d994fef0292bee8adda0fe67db9288ace19250a9c
+  - name: portal-location-demo
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .
