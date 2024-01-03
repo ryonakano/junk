@@ -1,0 +1,25 @@
+app-id: com.github.ryonakano.tweaks
+runtime: io.elementary.Platform
+runtime-version: '7.3'
+sdk: io.elementary.Sdk
+command: tweaks
+finish-args:
+  - '--share=ipc'
+  - '--socket=wayland'
+  - '--socket=fallback-x11'
+  - "--filesystem=xdg-run/dconf"
+  - "--filesystem=host:ro"
+  - "--talk-name=org.freedesktop.Flatpak"
+modules:
+  - name: tweaks
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .
+  - name: script
+    buildsystem: simple
+    sources:
+      - type: file
+        path: tweaks.sh
+    build-commands:
+      - install -Dm 755 tweaks.sh /app/bin/tweaks
