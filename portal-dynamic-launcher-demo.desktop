@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Portal Dynamic Launcher Demo
+GenericName=Demo App
+Comment=Demonstrate libportal dynamic launcher module
+Categories=GTK;Utility;
+Exec=io.github.ryonakano.portal-dynamic-launcher-demo
+Icon=io.github.ryonakano.portal-dynamic-launcher-demo
+Type=Application
+Terminal=false

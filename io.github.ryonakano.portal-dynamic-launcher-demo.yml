@@ -1,0 +1,29 @@
+app-id: io.github.ryonakano.portal-dynamic-launcher-demo
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: io.github.ryonakano.portal-dynamic-launcher-demo
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --filesystem=home
+modules:
+  - name: libportal
+    buildsystem: meson
+    config-opts:
+      - -Dbackend-gtk3=disabled
+      - -Dbackend-gtk4=enabled
+      - -Ddocs=false
+      - -Dtests=false
+    sources:
+      - type: archive
+        url: https://github.com/flatpak/libportal/releases/download/0.8.1/libportal-0.8.1.tar.xz
+        sha256: 281e54e4f8561125a65d20658f1462ab932b2b1258c376fed2137718441825ac
+
+  - name: portal-location-demo
+    buildsystem: meson
+    sources:
+      - type: dir
+        path: .

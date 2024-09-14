@@ -1,0 +1,8 @@
+# build dirs
+.flatpak-builder
+builddir*
+
+# vim
+*.swp
+*~
+*.un~
