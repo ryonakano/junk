@@ -17,7 +17,7 @@ switchboard_dep = dependency('switchboard-3')
 switchboard_plugsdir = switchboard_dep.get_variable('plugsdir', pkgconfig_define: ['libdir', libdir])
 
 plug_files = [
-    'src/SettingsPageBugPlug.vala',
+    'src/SettingsSidebarBugPlug.vala',
 ]
 
 shared_module(

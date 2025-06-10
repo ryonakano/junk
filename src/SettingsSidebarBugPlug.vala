@@ -18,7 +18,7 @@
  * Authored by: Corentin Noël <corentin@elementaryos.org>
  */
 
-public class SettingsPageBugPlug : Switchboard.Plug {
+public class SettingsSidebarBugPlug : Switchboard.Plug {
     private class CustomSettingsPage : Switchboard.SettingsPage {
         public int num { get; construct; }
 
@@ -46,11 +46,11 @@ public class SettingsPageBugPlug : Switchboard.Plug {
     private Switchboard.SettingsSidebar sidebar;
     private Gtk.Button remove_button;
 
-    public SettingsPageBugPlug () {
+    public SettingsSidebarBugPlug () {
         Object (category: Category.SYSTEM,
                 code_name: "settings-page-bug-plug",
-                display_name: "Bug in SettingsPage",
-                description: "Reproduce a bug in Switchboard.SettingsPage",
+                display_name: "Bug in SettingsSidebar",
+                description: "Reproduce a bug in Switchboard.SettingsSidebar",
                 icon: "applications-development",
                 supported_settings: new Gee.TreeMap<string, string?> (null, null));
     }
@@ -147,7 +147,7 @@ public class SettingsPageBugPlug : Switchboard.Plug {
 }
 
 public Switchboard.Plug get_plug (Module module) {
-    debug ("Activating SettingsPageBug plug");
-    var plug = new SettingsPageBugPlug ();
+    debug ("Activating SettingsSidebarBugPlug");
+    var plug = new SettingsSidebarBugPlug ();
     return plug;
 }
