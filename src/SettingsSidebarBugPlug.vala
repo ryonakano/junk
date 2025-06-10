@@ -69,10 +69,10 @@ public class SettingsSidebarBugPlug : Switchboard.Plug {
             vexpand = true
         };
 
-        var add_button = new Gtk.Button.from_icon_name ("list-add") {
+        var add_button = new Gtk.Button.from_icon_name ("list-add-symbolic") {
             tooltip_text = "Add"
         };
-        remove_button = new Gtk.Button.from_icon_name ("list-remove") {
+        remove_button = new Gtk.Button.from_icon_name ("list-remove-symbolic") {
             tooltip_text = "Remove"
         };
 
