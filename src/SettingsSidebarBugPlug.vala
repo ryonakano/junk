@@ -96,7 +96,7 @@ public class SettingsSidebarBugPlug : Switchboard.Plug {
         add_button.clicked.connect (add_view);
         remove_button.clicked.connect (remove_view);
 
-        sidebar.bind_property ("visible-child-name",
+        stack.bind_property ("visible-child-name",
             remove_button, "sensitive",
             BindingFlags.DEFAULT | BindingFlags.SYNC_CREATE,
             ((binding, visible_child_name, ref sensitive) => {
