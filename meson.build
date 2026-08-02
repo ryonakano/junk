@@ -15,7 +15,7 @@ executable(
   dependencies: [
     #dependency('gio-2.0'),
     #dependency('glib-2.0'),
-    #dependency('granite-7'),
+    dependency('granite-9'),
     dependency('gtk4'),
   ],
   install: true,
